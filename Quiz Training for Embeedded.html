@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embedded Systems Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 0;
+            position: relative;
+        }
+
+        .navbar {
+            width: 100%;
+            background-color: #1a73e8;
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 500;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .quiz-container {
+            max-width: 800px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            padding: 30px 40px;
+            animation: fadeIn 0.8s ease-out;
+            margin-top: 20px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            color: #1a73e8;
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: 700;
+            font-size: 2.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .quiz-intro {
+            text-align: center;
+            margin-bottom: 35px;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .question-card {
+            margin-bottom: 30px;
+            padding: 25px;
+            border-radius: 10px;
+            background-color: #fdfefe;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .question-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .question-text {
+            font-weight: 600;
+            margin-bottom: 18px;
+            color: #333;
+            font-size: 1.15rem;
+        }
+
+        .options-container {
+            margin-left: 0;
+        }
+
+        .option {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            border-radius: 8px;
+            background-color: #f7f9fc;
+            border: 1px solid #e0e0e0;
+            transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option:hover {
+            background-color: #ebf5ff;
+            border-color: #a0cffc;
+            box-shadow: 0 0 15px rgba(26, 115, 232, 0.6), 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .option::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 70%);
+            transform: rotate(0deg);
+            transition: transform 0.5s linear;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        .option:hover::before {
+            opacity: 1;
+            transform: rotate(360deg);
+        }
+
+        .option input[type="radio"] {
+            margin-right: 12px;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            accent-color: #1a73e8;
+        }
+
+        .option label {
+            cursor: pointer;
+            font-size: 1rem;
+            color: #444;
+            flex-grow: 1;
+        }
+
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            margin-top: 40px;
+        }
+
+        .submit-btn:hover {
+            background-color: #155cb7;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .results-container {
+            display: none;
+            margin-top: 40px;
+            padding: 30px;
+            border-radius: 12px;
+            background-color: #e8f0fe;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .score-display {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .score-display h2 {
+            font-size: 2rem;
+            color: #1a73e8;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .score-display p {
+            font-size: 1.2rem;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        .correct-score {
+            color: #28a745;
+            font-weight: bold;
+            font-size: 2.2rem;
+            transition: color 0.3s ease;
+        }
+
+        .incorrect-score {
+            color: #dc3545;
+            font-weight: bold;
+            font-size: 2.2rem;
+            transition: color 0.3s ease;
+        }
+
+        .incorrect-questions {
+            margin-top: 30px;
+            border-top: 1px solid #d0d0d0;
+            padding-top: 25px;
+        }
+
+        .incorrect-questions h3 {
+            font-size: 1.5rem;
+            color: #dc3545;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .incorrect-question {
+            background-color: #ffebee;
+            padding: 18px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 5px solid #dc3545;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .incorrect-question p {
+            margin-bottom: 5px;
+            font-size: 1rem;
+        }
+
+        .incorrect-question strong {
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .correct-answer {
+            color: #28a745;
+            font-weight: 500;
+            margin-top: 8px;
+            font-size: 0.95rem;
+        }
+
+        .selected-answer {
+            color: #dc3545;
+            font-weight: 500;
+            margin-top: 5px;
+            font-size: 0.95rem;
+        }
+
+        #timedMessageBox {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #fff3e0;
+            border: 1px solid #ffcc80;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #e65100;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: none;
+            z-index: 1000;
+            animation: slideInUp 0.5s ease-out;
+            text-align: center;
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translateX(-50%) translateY(50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Modal specific styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-card {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+            transform: translateY(-20px);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .modal-overlay.show .modal-card {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .modal-card h2 {
+            color: #1a73e8;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .modal-card p {
+            color: #444;
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+        }
+
+        .modal-card h1 {
+            color: #333;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+
+        .modal-card button {
+            background-color: #1a73e8;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border: none;
+        }
+
+        .modal-card button:hover {
+            background-color: #155cb7;
+        }
+
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .quiz-container {
+                padding: 20px 25px;
+            }
+
+            .question-card {
+                padding: 20px;
+            }
+
+            .question-text {
+                font-size: 1.05rem;
+            }
+
+            .option label {
+                font-size: 0.95rem;
+            }
+
+            .submit-btn {
+                font-size: 1rem;
+                padding: 12px;
+            }
+
+            .score-display h2 {
+                font-size: 1.8rem;
+            }
+
+            .correct-score,
+            .incorrect-score {
+                font-size: 2rem;
+            }
+
+            .incorrect-questions h3 {
+                font-size: 1.3rem;
+            }
+
+            .navbar {
+                padding: 10px 15px;
+                font-size: 1rem;
+            }
+
+            #timedMessageBox {
+                width: 90%;
+                font-size: 1rem;
+                padding: 8px 15px;
+            }
+
+            .modal-card h2 {
+                font-size: 1.5rem;
+            }
+
+            .modal-card p {
+                font-size: 1rem;
+            }
+
+            .modal-card button {
+                padding: 8px 20px;
+                font-size: 0.95rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .quiz-container {
+                padding: 15px 20px;
+            }
+
+            .question-card {
+                padding: 15px;
+                margin-bottom: 20px;
+            }
+
+            .question-text {
+                font-size: 1rem;
+            }
+
+            .option {
+                padding: 8px 12px;
+            }
+
+            .option label {
+                font-size: 0.9rem;
+            }
+
+            .submit-btn {
+                font-size: 0.95rem;
+                padding: 10px;
+            }
+
+            .results-container {
+                padding: 20px;
+            }
+
+            .navbar {
+                padding: 8px 10px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        Made by Elfaky
+    </nav>
+
+    <div class="quiz-container">
+        <h1>Embedded Systems Quiz</h1>
+        <p class="quiz-intro">Test your knowledge of Embedded Systems concepts.</p>
+
+        <form id="quizForm">
+
+        </form>
+
+        <button type="button" id="submitBtn" class="submit-btn">Submit Quiz</button>
+
+        <div id="results" class="results-container">
+            <div class="score-display">
+                <h2>Your Results</h2>
+                <p>Correct answers: <span id="correctCount" class="correct-score">0</span></p>
+                <p>Incorrect answers: <span id="incorrectCount" class="incorrect-score">0</span></p>
+            </div>
+            <div id="incorrectQuestions" class="incorrect-questions">
+                <h3>Questions to Review:</h3>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="timedMessageBox">❤صل علي النبي</div>
+
+    <div id="welcomeModal" class="modal-overlay">
+        <div class="modal-card">
+            <h2>❤يا هلا و مرحبا </h2>
+            <h1>❤ متنسوش تصلوا على النبي وتدعوا في ظهر الغيب</h1> <br>
+            <p>ضروري لو في سؤال تبع المسائل افتح المسله من الشيت و ابدء شوف الحل</p>
+            <p>و متنساش تفتح الشيت و تحل المسئله لوحدك</p>
+            <button id="modalOkBtn">OK</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                question: "Which register in AVR microcontrollers is used to configure a pin as input or output?",
+                options: ["PORTX", "PINX", "DDRx", "SPCR"],
+                correctIndex: 2,
+                correctAnswer: "C. DDRx"
+            },
+            {
+                question: "To read the current logic level of an input pin on PORTD, which register should be used?",
+                options: ["PORTD", "DDRD", "PIND", "SPDR"],
+                correctIndex: 2,
+                correctAnswer: "C. PIND"
+            },
+            {
+                question: "What is the function of the PORTx register when a pin is configured as output?",
+                options: ["It disables the pin", "It reads analog values", "It sets the output HIGH or LOW", "It configures the direction"],
+                correctIndex: 2,
+                correctAnswer: "C. It sets the output HIGH or LOW"
+            },
+            {
+                question: "What does the Timer/Counter register (e.g., TCNT0) do in AVR microcontrollers?",
+                options: ["Sets the baud rate for UART", "Holds the current count value of the timer", "Stores the ADC conversion result", "Enables or disables external interrupts"],
+                correctIndex: 1,
+                correctAnswer: "B. Holds the current count value of the timer"
+            },
+            {
+                question: "In CTC mode, what happens when the timer value matches the OCR (Output Compare Register) value?",
+                options: ["Timer stops", "Timer resets to 0", "Timer overflows", "Interrupt is disabled"],
+                correctIndex: 1,
+                correctAnswer: "B. Timer resets to 0"
+            },
+            {
+                question: "What is the primary advantage of using interrupts in a microcontroller-based system?",
+                options: ["Reduces the need for memory", "Increases power consumption", "Allows the CPU to respond immediately to external events", "Makes the program run slower"],
+                correctIndex: 2,
+                correctAnswer: "C. Allows the CPU to respond immediately to external events"
+            },
+            {
+                question: "What happens when an interrupt occurs in an AVR microcontroller?",
+                options: ["The microcontroller shuts down", "The current program is permanently stopped", "The microcontroller jumps to a special routine to handle the event", "Nothing happens unless a timer is running"],
+                correctIndex: 2,
+                correctAnswer: "C. The microcontroller jumps to a special routine to handle the event"
+            },
+            {
+                question: "What is the name of the function that automatically executes when a specific interrupt occurs?",
+                options: ["Main routine", "Watchdog", "Interrupt Service Routine (ISR)", "Polling function"],
+                correctIndex: 2,
+                correctAnswer: "C. Interrupt Service Routine (ISR)"
+            },
+            {
+                question: "What is the primary function of an ADC in AVR microcontrollers?",
+                options: ["Convert digital data to analog", "Convert analog signals to digital values", "Send data over serial", "Control voltage levels"],
+                correctIndex: 1,
+                correctAnswer: "B. Convert analog signals to digital values"
+            },
+            {
+                question: "What is the default reference voltage used for ADC in Arduino/AVR?",
+                options: ["12V", "3.3V", "5V", "9V"],
+                correctIndex: 2,
+                correctAnswer: "C. 5V"
+            },
+            {
+                question: "Which Arduino function is used to read analog input?",
+                options: ["digitalRead()", "analogRead()", "readADC()", "adcStart()"],
+                correctIndex: 1,
+                correctAnswer: "B. analogRead()"
+            },
+            {
+                question: "What Arduino function is used to turn an LED ON or OFF?",
+                options: ["analogWrite()", "digitalRead()", "pinMode()", "digitalWrite()"],
+                correctIndex: 3,
+                correctAnswer: "D. digitalWrite()"
+            },
+            {
+                question: "What does the following code do? digitalWrite(13, HIGH); delay(1000); digitalWrite(13, LOW);",
+                options: ["Turns off the LED", "Turns on the LED continuously", "Blinks the LED for 1 second", "Dims the LED"],
+                correctIndex: 2,
+                correctAnswer: "C. Blinks the LED for 1 second"
+            },
+            {
+                question: "Before controlling an LED pin, you should configure it as:",
+                options: ["Input", "Analog", "Output", "Interrupt"],
+                correctIndex: 2,
+                correctAnswer: "C. Output"
+            },
+            {
+                question: "Why is a motor driver (like L298N) used with a microcontroller?",
+                options: ["To change signal types", "To reduce power", "To allow the microcontroller to handle high current safely", "To read analog signals"],
+                correctIndex: 2,
+                correctAnswer: "C. To allow the microcontroller to handle high current safely"
+            },
+            {
+                question: "What is the function of PWM in motor control?",
+                options: ["Turning motor ON/OFF only", "Controlling motor speed", "Changing motor type", "Reversing direction"],
+                correctIndex: 1,
+                correctAnswer: "B. Controlling motor speed"
+            },
+            {
+                question: "What does a typical DC motor need for direction control?",
+                options: ["One signal wire", "An analog input", "Two digital pins (IN1 and IN2)", "Only ground"],
+                correctIndex: 2,
+                correctAnswer: "C. Two digital pins (IN1 and IN2)"
+            },
+            {
+                question: "What does '16x2 LCD' mean?",
+                options: ["16 pixels by 2 pixels", "16 characters per row, 2 rows", "16 lines and 2 columns", "16-bit data and 2-line display"],
+                correctIndex: 1,
+                correctAnswer: "B. 16 characters per row, 2 rows"
+            },
+            {
+                question: "Which library is commonly used to control a text LCD in Arduino?",
+                options: ["Wire.h", "LiquidCrystal.h", "Servo.h", "LCDtext.h"],
+                correctIndex: 1,
+                correctAnswer: "B. LiquidCrystal.h"
+            },
+            {
+                question: "What is the first step to display text on an LCD in Arduino?",
+                options: ["Use lcd.print()", "Declare pins and initialize LCD with lcd.begin()", "Call analogWrite()", "Enable backlight"],
+                correctIndex: 1,
+                correctAnswer: "B. Declare pins and initialize LCD with lcd.begin()"
+            },
+            {
+                question: "What is one advantage of using an OLED display over a standard LCD?",
+                options: ["Consumes more power", "Requires backlight", "Sharper, high-contrast graphics", "Only works in bright light"],
+                correctIndex: 2,
+                correctAnswer: "C. Sharper, high-contrast graphics"
+            },
+            {
+                question: "What kind of information can be displayed on an OLED?",
+                options: ["Only numbers", "Only sensor data", "Text and graphics", "Only voltage readings"],
+                correctIndex: 2,
+                correctAnswer: "C. Text and graphics"
+            },
+            {
+                question: "What is the role of pinMode() in Arduino C when programming AVR microcontrollers?",
+                options: ["It sets the voltage level", "It sets a pin as input or output", "It disables interrupts", "It reads analog values"],
+                correctIndex: 1,
+                correctAnswer: "B. It sets a pin as input or output"
+            },
+            {
+                question: "Which tool is commonly used to write and debug code for AVR microcontrollers?",
+                options: ["Photoshop", "Arduino IDE or Atmel Studio", "MS Word", "MATLAB"],
+                correctIndex: 1,
+                correctAnswer: "B. Arduino IDE or Atmel Studio"
+            },
+
+            {
+                question: "What is a characteristic of record data?",
+                options: ["Each record has a different number of attributes", "Each record has a fixed set of attributes", "Records contain only textual descriptions", "Each record varies in data type and structure"],
+                correctIndex: 1,
+                correctAnswer: "B. Each record has a fixed set of attributes"
+            },
+            {
+                question: "In record data, a record is typically represented as:",
+                options: ["A hierarchical tree", "A collection of unrelated values", "A row with fixed columns for attributes", "A set of images"],
+                correctIndex: 2,
+                correctAnswer: "C. A row with fixed columns for attributes"
+            },
+            {
+                question: "According to the data matrix description, how are data objects represented?",
+                options: ["As paragraphs of text", "As points in a multi-dimensional space", "As a sequence of unstructured records", "As a list of unrelated items"],
+                correctIndex: 1,
+                correctAnswer: "B. As points in a multi-dimensional space"
+            },
+            {
+                question: "In document data, what does each entry in the matrix represent?",
+                options: ["Number of attributes", "Number of characters in a document", "Number of times a term appears in a document", "The length of the document in pages"],
+                correctIndex: 2,
+                correctAnswer: "C. Number of times a term appears in a document"
+            },
+            {
+                question: "Which of the following is an example of record data?",
+                options: ["A list of customer names, ages, and addresses stored in a table", "A collection of tweets without any structure", "A folder of images", "A random collection of words"],
+                correctIndex: 0,
+                correctAnswer: "A. A list of customer names, ages, and addresses stored in a table"
+            },
+            {
+                question: "What is a good example of document data?",
+                options: ["A text file containing the full text of several articles, with word counts stored for each article", "A database with sales figures", "A matrix of distances between cities", "A list of employees and their salaries"],
+                correctIndex: 0,
+                correctAnswer: "A. A text file containing the full text of several articles, with word counts stored for each article"
+            },
+            {
+                question: "Which situation is an example of transaction data?",
+                options: ["A shopping cart that records items bought together, like milk, bread, and butter", "A survey recording people's favorite color", "A medical record with patient vitals", "A matrix of student grades"],
+                correctIndex: 0,
+                correctAnswer: "A. A shopping cart that records items bought together, like milk, bread, and butter"
+            },
+            {
+                question: "Which of the following best describes graph data?",
+                options: ["Data where objects are connected by links or edges", "Data stored in a simple table", "A collection of unrelated records", "A set of isolated documents"],
+                correctIndex: 0,
+                correctAnswer: "A. Data where objects are connected by links or edges"
+            },
+            {
+                question: "Which is a good example of graph data?",
+                options: ["A molecule where atoms are nodes and chemical bonds are edges", "A spreadsheet with student grades", "A shopping receipt listing items", "A text file full of tweets"],
+                correctIndex: 0,
+                correctAnswer: "A. A molecule where atoms are nodes and chemical bonds are edges"
+            },
+            {
+                question: "How does a set of webpages and their links form a graph?",
+                options: ["Each webpage is a node and hyperlinks are edges", "Each hyperlink is treated as a separate record", "Pages are sorted alphabetically", "Pages are just stored as plain text without relationships"],
+                correctIndex: 0,
+                correctAnswer: "A. Each webpage is a node and hyperlinks are edges"
+            },
+            {
+                question: "Which of the following is NOT typically represented as graph data?",
+                options: ["Social networks like Facebook", "Flight connections between airports", "Shopping carts with multiple items", "Webpages connected by hyperlinks"],
+                correctIndex: 2,
+                correctAnswer: "C. Shopping carts with multiple items"
+            },
+            {
+                question: "What characterizes ordered data in general?",
+                options: ["The sequence or position of data points is important", "The data points are completely independent", "Data points are organized randomly", "Data is unstructured and chaotic"],
+                correctIndex: 0,
+                correctAnswer: "A. The sequence or position of data points is important"
+            },
+            {
+                question: "Which is an example of spatial data?",
+                options: ["The list of students in a school", "The locations of restaurants on a map", "The number of books in a library", "A set of random tweets"],
+                correctIndex: 1,
+                correctAnswer: "B. The locations of restaurants on a map"
+            },
+            {
+                question: "Which situation best describes temporal data?",
+                options: ["A table showing different countries and their capitals", "Temperature recorded every hour during a day", "Locations of cities on a world map", "A list of favorite movies"],
+                correctIndex: 1,
+                correctAnswer: "B. Temperature recorded every hour during a day"
+            },
+            {
+                question: "Which of the following best describes noise in a dataset?",
+                options: ["Data points that are very similar", "Random errors or meaningless data that distort the true values", "Correct but incomplete data", "Data that is neatly organized"],
+                correctIndex: 1,
+                correctAnswer: "B. Random errors or meaningless data that distort the true values"
+            },
+            {
+                question: "What is an outlier in data?",
+                options: ["A value that is consistent with the majority of data", "A missing value", "A value significantly different from most other values", "A duplicate of another record"],
+                correctIndex: 2,
+                correctAnswer: "C. A value significantly different from most other values"
+            },
+            {
+                question: "In an embedded system, which of the following would be considered record data?",
+                options: ["Temperature, humidity, and pressure recorded together by a weather sensor", "A random audio recording", "A video stream from a drone", "A simple blinking LED"],
+                correctIndex: 0,
+                correctAnswer: "A. Temperature, humidity, and pressure recorded together by a weather sensor"
+            },
+            {
+                question: "In an embedded system, a data matrix could represent:",
+                options: ["A table of sensor readings over different time intervals", "A single signal from a temperature sensor", "A blinking pattern from an LED", "A robot moving randomly without storing data"],
+                correctIndex: 0,
+                correctAnswer: "A. A table of sensor readings over different time intervals"
+            },
+            {
+                question: "Which is an example of transaction data in an embedded retail system?",
+                options: ["A list of customer IDs", "Data from multiple items scanned during a single purchase", "A record of employee names", "A random alarm activation log"],
+                correctIndex: 1,
+                correctAnswer: "B. Data from multiple items scanned during a single purchase"
+            },
+            {
+                question: "What is an example of noise in an embedded sensor network?",
+                options: ["An occasional random spike in a temperature reading due to electrical interference", "A missing temperature value", "A repeated humidity record", "A completely accurate measurement"],
+                correctIndex: 0,
+                correctAnswer: "A. An occasional random spike in a temperature reading due to electrical interference"
+            },
+            {
+                question: "In an embedded medical device, missing data might happen when:",
+                options: ["The sensor temporarily disconnects and does not record heartbeats", "The sensor records exactly the expected values", "The same heart rate value is recorded twice", "Noise causes minor fluctuations in readings"],
+                correctIndex: 0,
+                correctAnswer: "A. The sensor temporarily disconnects and does not record heartbeats"
+            },
+            {
+                question: "What is an example of wrong data from an embedded GPS device?",
+                options: ["Reporting a location that is hundreds of kilometers away from the actual position", "Not recording any data", "Recording correct locations with slight delays", "Slight signal variations due to noise"],
+                correctIndex: 0,
+                correctAnswer: "A. Reporting a location that is hundreds of kilometers away from the actual position"
+            },
+
+            {
+                question: "The cut-in voltage for silicon diode is approximately",
+                options: ["0.2 V", "0.6 V", "1.1 V", "1.4 V"],
+                correctIndex: 1,
+                correctAnswer: "B. 0.6 V"
+            },
+            {
+                question: "The PN junction diode is used as",
+                options: ["An amplifier", "A rectifier", "An oscillator"],
+                correctIndex: 1,
+                correctAnswer: "B. A rectifier"
+            },
+            {
+                question: "In the depletion region of an unbiased PN junction diode there are",
+                options: ["Only electrons", "Only holes", "Only fixed ions"],
+                correctIndex: 2,
+                correctAnswer: "C. Only fixed ions"
+            },
+            {
+                question: "What is the primary function of a diode?",
+                options: ["To store charge", "To amplify signals", "To allow current flow in one direction only", "To generate AC voltage"],
+                correctIndex: 2,
+                correctAnswer: "C. To allow current flow in one direction only"
+            },
+            {
+                question: "What is the main purpose of a Zener diode?",
+                options: ["To convert AC to DC", "To regulate voltage", "To amplify signals", "To store energy"],
+                correctIndex: 1,
+                correctAnswer: "B. To regulate voltage"
+            },
+            {
+                question: "Which type of diode is used to convert light into an electrical signal?",
+                options: ["Zener diode", "Light Emitting Diode (LED)", "Photodiode", "Schottky diode"],
+                correctIndex: 2,
+                correctAnswer: "C. Photodiode"
+            },
+            {
+                question: "In a half-wave rectifier, how much of the AC signal is converted into DC?",
+                options: ["25%", "50%", "75%", "100%"],
+                correctIndex: 1,
+                correctAnswer: "B. 50%"
+            },
+            {
+                question: "The Op-Amp amplifies ____ between two input signals, known as the differential input voltage, in its open-loop operation.",
+                options: ["The sum", "The product", "The difference", "The average"],
+                correctIndex: 2,
+                correctAnswer: "C. The difference"
+            },
+            {
+                question: "What is the phase shift between the input and output of an inverting Op-Amp?",
+                options: ["0°", "90°", "180°", "270°"],
+                correctIndex: 2,
+                correctAnswer: "C. 180°"
+            },
+            {
+                question: "How many terminals does a standard operational amplifier (Op-Amp) have?",
+                options: ["2", "3", "5", "8"],
+                correctIndex: 3,
+                correctAnswer: "D. 8"
+            },
+            {
+                question: "Which of the following is NOT a terminal of an operational amplifier (Op-Amp)?",
+                options: ["Inverting input", "Non-inverting input", "Ground", "Collector"],
+                correctIndex: 3,
+                correctAnswer: "D. Collector"
+            },
+            {
+                question: "How many terminals does a Bipolar Junction Transistor (BJT) have?",
+                options: ["2", "3", "4", "5"],
+                correctIndex: 1,
+                correctAnswer: "B. 3"
+            },
+            {
+                question: "Which of the following are the terminals of a BJT?",
+                options: ["Anode, Cathode, Base", "Drain, Source, Gate", "Collector, Base, Emitter", "Input, Output, Ground"],
+                correctIndex: 2,
+                correctAnswer: "C. Collector, Base, Emitter"
+            },
+            {
+                question: "What is the basic structure of a Bipolar Junction Transistor (BJT)?",
+                options: ["Two P-type and one N-type semiconductor layers", "Two N-type and one P-type semiconductor layers", "A single P-N junction", "Both a) and b)"],
+                correctIndex: 3,
+                correctAnswer: "D. Both a) and b)"
+            },
+            {
+                question: "What is the main application of BJTs in embedded systems?",
+                options: ["Wireless communication", "Power amplification and switching", "Image processing", "Data storage"],
+                correctIndex: 1,
+                correctAnswer: "B. Power amplification and switching"
+            },
+            {
+                question: "What is the primary disadvantage of BJTs in embedded applications compared to MOSFETS?",
+                options: ["Lower switching speed and higher power dissipation", "Higher input impedance", "Requires fewer components"],
+                correctIndex: 0,
+                correctAnswer: "A. Lower switching speed and higher power dissipation"
+            },
+            {
+                question: "What is the main application of MOSFETs in embedded systems?",
+                options: ["Data storage", "Power management and motor control", "Display screens", "RF signal reception"],
+                correctIndex: 1,
+                correctAnswer: "B. Power management and motor control"
+            },
+            {
+                question: "Which of the following is NOT a MOSFET terminal?",
+                options: ["Gate", "Collector", "Drain", "Source"],
+                correctIndex: 1,
+                correctAnswer: "B. Collector"
+            },
+            {
+                question: "Which MOSFET terminal controls the current flow between source and drain?",
+                options: ["Gate", "Drain", "Source", "Substrate"],
+                correctIndex: 0,
+                correctAnswer: "A. Gate"
+            },
+
+            {
+                question: "Which of the following best defines 'data objects'?",
+                options: ["A system of organizing files", "The representation of real-world items in a database", "A collection of operations performed on data", "A set of executable functions"],
+                correctIndex: 1,
+                correctAnswer: "B. The representation of real-world items in a database"
+            },
+            {
+                question: "In a database, what is an attribute?",
+                options: ["The relationship between two objects", "The value or property of an object", "A collection of related data objects", "A method for querying the data"],
+                correctIndex: 1,
+                correctAnswer: "B. The value or property of an object"
+            },
+            {
+                question: "Which of the following can be considered an attribute in a customer database?",
+                options: ["Customer's first name", "Customer's purchase history", "Customer's membership level", "All of the above"],
+                correctIndex: 3,
+                correctAnswer: "D. All of the above"
+            },
+            {
+                question: "In the context of databases, an object is:",
+                options: ["A record representing a real-world entity", "A function that manipulates data", "A set of operations performed on data", "A schema defining relationships between tables"],
+                correctIndex: 0,
+                correctAnswer: "A. A record representing a real-world entity"
+            },
+            {
+                question: "Which of the following is an operation that cannot be performed on nominal data?",
+                options: ["Sorting", "Comparison", "Arithmetic calculation", "Classification"],
+                correctIndex: 2,
+                correctAnswer: "C. Arithmetic calculation"
+            },
+            {
+                question: "Which operation is valid for ordinal data?",
+                options: ["Finding the median", "Finding the mean", "Performing multiplication", "Calculating ratios"],
+                correctIndex: 0,
+                correctAnswer: "A. Finding the median"
+            },
+            {
+                question: "In interval data, which of the following is NOT meaningful?",
+                options: ["The difference between values", "The addition of values", "TThe ratio of two values", "The comparison of differences between values"],
+                correctIndex: 2,
+                correctAnswer: "C. The ratio of two values"
+            },
+            {
+                question: "Which type of data can you perform all arithmetic operations, including addition, subtraction, multiplication, and division?",
+                options: ["Nominal", "Ordinal", "Interval", "Ratio"],
+                correctIndex: 3,
+                correctAnswer: "D. Ratio"
+            },
+            {
+                question: "Which of the following operations can be performed on nominal data?",
+                options: ["Addition", "Multiplication", "Classification", "Subtraction"],
+                correctIndex: 2,
+                correctAnswer: "C. Classification"
+            },
+            {
+                question: "Which of the following is an example of an ordinal attribute?",
+                options: ["Customer's gender", "Temperature in Celsius", "Ranking of employees: 1st, 2nd, 3rd", "Employee's age"],
+                correctIndex: 2,
+                correctAnswer: "C. Ranking of employees: 1st, 2nd, 3rd"
+            },
+            {
+                question: "Which of the following is an example of a ratio attribute?",
+                options: ["Height of a person", "Customer satisfaction level", "Rank in a race", "Car model"],
+                correctIndex: 0,
+                correctAnswer: "A. Height of a person"
+            },
+            {
+                question: "Ordinal attributes have a meaningful order or ranking, but the differences between values are not measurable.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "A. True"
+            },
+            {
+                question: "Which of the following is an example of a Nominal attribute?",
+                options: ["Age", "Blood type (A, B, AB, O)", "Rank in a competition", "Weight in kilograms"],
+                correctIndex: 1,
+                correctAnswer: "B. Blood type (A, B, AB, O)"
+            },
+            {
+                question: "Which of the following is an example of Ordinal data",
+                options: ["Monthly income", "Education level (High School, Bachelor's, Master's)", "Age"],
+                correctIndex: 1,
+                correctAnswer: "B. Education level (High School, Bachelor's, Master's)"
+            },
+            {
+                question: "Which of the following is an example of Interval data?",
+                options: ["Salary of employees", "Temperature in Celsius", "Ranking in a contest", "The number of children in a family"],
+                correctIndex: 1,
+                correctAnswer: "B. Temperature in Celsius"
+            },
+            {
+                question: "What does the Entropy formula measure in a decision tree?",
+                options: ["The maximum probability of a class at a node", "The probability that a randomly chosen element is incorrectly classified", "The degree of impurity or disorder in a node", "The number of classes present in the dataset"],
+                correctIndex: 2,
+                correctAnswer: "C. The degree of impurity or disorder in a node"
+            },
+            {
+                question: "Which impurity measure uses the formula $1-max[p_{i}(t)]$?",
+                options: ["Gini Index", "Entropy", "Classification error", "Variance reduction"],
+                correctIndex: 0,
+                correctAnswer: "A. Gini Index"
+            },
+            {
+                question: "In the formulas shown, what does $p_{i}(t)$ represent?",
+                options: ["Total number of records in the dataset", "Number of features", "Frequency (probability) of class i at node t", "Weight of the attribute in the tree"],
+                correctIndex: 2,
+                correctAnswer: "C. Frequency (probability) of class i at node t"
+            },
+            {
+                question: "If a node contains samples from only one class, which of the following will be true?",
+                options: ["Entropy = 1", "Gini Index = 1", "Entropy = 0 and Gini Index = 0", "Misclassification error = 1"],
+                correctIndex: 2,
+                correctAnswer: "C. Entropy = 0 and Gini Index = 0"
+            },
+            {
+                question: "What is an itemset",
+                options: ["A group of frequent transactions", "A collection of one or more items", "A single item in a transaction", "A transaction with the least items"],
+                correctIndex: 1,
+                correctAnswer: "B. A collection of one or more items"
+            },
+            {
+                question: "What is the support count (σ) of the itemset {Milk, Bread}?",
+                options: ["2", "3", "4", "5"],
+                correctIndex: 2,
+                correctAnswer: "C. 4"
+            },
+            {
+                question: "what is the support of the itemset {Milk, Bread}?",
+                options: ["3", "$3/5$", "$2/5$", "$1/5$"],
+                correctIndex: 1,
+                correctAnswer: "B. $3/5$"
+            },
+            {
+                question: "If the minimum support threshold (minsup) is 0.6, which itemset is a frequent itemset?",
+                options: ["{Bread}", "{Milk, Diaper, Coke}", "{Beer, Eggs}", "{Milk, Beer, Coke}"],
+                correctIndex: 0,
+                correctAnswer: "A. {Bread}"
+            },
+            {
+                question: "What is the support count (σ) of the itemset {Milk, Diaper}?",
+                options: ["1", "2", "3", "4"],
+                correctIndex: 3,
+                correctAnswer: "D. 4"
+            }
+        ];
+
+        const uniqueQuestionsMap = new Map();
+        quizData.forEach(q => {
+            uniqueQuestionsMap.set(q.question, q);
+        });
+        const finalQuizData = Array.from(uniqueQuestionsMap.values());
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        shuffleArray(finalQuizData);
+
+        const form = document.getElementById('quizForm');
+
+        finalQuizData.forEach((q, index) => {
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            const questionNumber = index + 1;
+
+            const questionText = document.createElement('div');
+            questionText.className = 'question-text';
+            questionText.textContent = `${questionNumber}. ${q.question}`;
+            card.appendChild(questionText);
+
+            const optionsContainer = document.createElement('div');
+            optionsContainer.className = 'options-container';
+
+            const options = [...q.options];
+            const shuffledOptions = shuffleArray(options);
+
+            shuffledOptions.forEach((opt, optIndex) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+
+                const id = `q${index}-${optIndex}`;
+                const radio = document.createElement('input');
+                radio.type = 'radio';
+                radio.id = id;
+                radio.name = `q${index}`;
+                radio.value = opt;
+
+                const label = document.createElement('label');
+                label.setAttribute('for', id);
+                label.textContent = opt;
+
+                optionDiv.appendChild(radio);
+                optionDiv.appendChild(label);
+                optionsContainer.appendChild(optionDiv);
+            });
+
+            card.appendChild(optionsContainer);
+            form.appendChild(card);
+        });
+
+        document.getElementById('submitBtn').addEventListener('click', () => {
+            const resultsContainer = document.getElementById('results');
+            const correctCountSpan = document.getElementById('correctCount');
+            const incorrectCountSpan = document.getElementById('incorrectCount');
+            const incorrectQuestionsDiv = document.getElementById('incorrectQuestions');
+
+            incorrectQuestionsDiv.innerHTML = '<h3>Questions to Review:</h3>';
+            let correctCount = 0;
+            let incorrectCount = 0;
+
+            finalQuizData.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+
+                if (!selectedOption) {
+                    incorrectCount++;
+                    const div = document.createElement('div');
+                    div.className = 'incorrect-question';
+                    div.innerHTML = `<p><strong>${index + 1}. ${q.question}</strong></p><p class="correct-answer">Correct Answer: ${q.correctAnswer}</p><p class="selected-answer">You did not select an answer.</p>`;
+                    incorrectQuestionsDiv.appendChild(div);
+                    return;
+                }
+
+                const selectedLabel = selectedOption.value.trim();
+
+                if (selectedLabel === q.options[q.correctIndex]) {
+                    correctCount++;
+                } else {
+                    incorrectCount++;
+                    const div = document.createElement('div');
+                    div.className = 'incorrect-question';
+                    div.innerHTML = `<p><strong>${index + 1}. ${q.question}</strong></p><p class="selected-answer">Your answer: ${selectedLabel}</p><p class="correct-answer">Correct Answer: ${q.correctAnswer}</p>`;
+                    incorrectQuestionsDiv.appendChild(div);
+                }
+            });
+
+            correctCountSpan.textContent = correctCount;
+            incorrectCountSpan.textContent = incorrectCount;
+            resultsContainer.style.display = 'block';
+            resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+
+        const timedMessageBox = document.getElementById('timedMessageBox');
+
+        function showTimedMessage() {
+            timedMessageBox.style.display = 'block';
+            setTimeout(() => {
+                timedMessageBox.style.display = 'none';
+            }, 3000);
+        }
+
+        setInterval(showTimedMessage, 300000);
+
+        const welcomeModal = document.getElementById('welcomeModal');
+        const modalOkBtn = document.getElementById('modalOkBtn');
+
+        welcomeModal.classList.add('show');
+
+        modalOkBtn.addEventListener('click', () => {
+            welcomeModal.classList.remove('show');
+        });
+    </script>
+
+</body>
+
+</html>

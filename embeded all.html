@@ -1,0 +1,1537 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أسئلة Embedded Systems</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base font size for the entire document, relative to which all 'rem' units will scale */
+        html {
+            font-size: 16px; /* Default base for rem units */
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #F8F9FA; /* Page Background */
+            direction: ltr; /* Changed to Left-to-right */
+            text-align: left; /* Changed to Left-align */
+            color: #3A3A3A; /* Darker text for better readability */
+            line-height: 1.6;
+            font-size: 1.125rem; /* Initial base font size for body content */
+            transition: font-size 0.2s ease-in-out; /* Smooth transition for font size changes */
+        }
+        .header-bg {
+            background-color: #3B82F6; /* Blue for Embedded Systems theme */
+            color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Added shadow */
+            padding: 1.5rem 0;
+        }
+        .header-bg h1 {
+            font-size: 2.25rem; /* text-4xl */
+            font-weight: 700; /* font-bold */
+        }
+        .header-bg p {
+            font-size: 1.75rem; /* Increased font size for Ahmed Attia, made it larger */
+            margin-top: 0.5rem;
+        }
+        .nav-button {
+            background-color: #60A5FA; /* Lighter Blue */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease; /* Added transform for hover effect */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Added shadow */
+        }
+        .nav-button:hover {
+            background-color: #3B82F6; /* Darker Blue */
+            transform: translateY(-2px); /* Lift button on hover */
+        }
+        .nav-button.active {
+            background-color: #F9D423; /* Sunny Yellow */
+            color: #3A3A3A; /* Dark Gray */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Stronger shadow when active */
+            transform: translateY(-1px); /* Slightly lift when active */
+        }
+        .card {
+            background-color: #FFFFFF; /* Card Background */
+            border-radius: 0.75rem; /* More rounded corners */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Stronger shadow */
+            margin-bottom: 2.5rem; /* More space between cards */
+            padding: 2rem; /* Generous padding */
+            border: 1px solid #E0E0E0; /* Light border for form feel */
+            direction: ltr; /* Changed to Left-to-right for card content */
+            text-align: left; /* Changed to Left-align text within card */
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Smooth transition */
+        }
+        .card:hover {
+            transform: translateY(-5px); /* Lift card on hover */
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25); /* Stronger shadow on hover */
+        }
+        .question-text {
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 700; /* font-bold */
+            color: #424242; /* Slightly darker gray */
+            margin-bottom: 1.5rem;
+            line-height: 1.8; /* Improved readability */
+        }
+        .answer-button, .check-all-button {
+            background-color: #3B82F6; /* Blue */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease; /* Added transform for hover effect */
+            margin-top: 1.5rem;
+            font-weight: 600;
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.2); /* Adjusted shadow for blue */
+        }
+        .answer-button:hover, .check-all-button:hover {
+            background-color: #2563EB; /* Darker Blue */
+            transform: translateY(-2px); /* Lift button on hover */
+            box-shadow: 0 6px 12px rgba(59, 130, 246, 0.3); /* Adjusted shadow for blue */
+        }
+        .answer-text {
+            color: #10B981; /* Green for correct answer text */
+            font-weight: 700; /* bold */
+            margin-top: 1rem;
+            display: none; /* Hidden by default */
+            font-size: 1.1rem;
+        }
+        .mcq-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem; /* More space between options */
+            cursor: pointer;
+            position: relative; /* Needed for custom radio */
+            padding: 1rem 1.25rem; /* Increased padding for better click sensitivity */
+            border-radius: 0.375rem; /* Rounded corners for option box */
+            transition: background-color 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* Subtle shadow for options */
+            border: 1px solid #E0E0E0; /* Light border */
+            direction: ltr; /* Changed to Left-to-right for option content */
+            text-align: left; /* Changed to Left-align for option content */
+        }
+        .mcq-option:hover {
+            background-color: #F5F5F5; /* Light gray on hover */
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .mcq-option input[type="radio"] {
+            /* Hide default radio button */
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .mcq-option label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 1.1rem; /* Larger font for options */
+            color: #333;
+            line-height: 1.5; /* Improve readability */
+            padding-left: 2.5rem; /* Changed to padding-left for LTR */
+            flex-grow: 1; /* Allow label to take available space */
+        }
+
+        /* Custom radio circle */
+        .mcq-option label::before {
+            content: '';
+            position: absolute;
+            left: 1rem; /* Changed to left for LTR */
+            top: 50%;
+            transform: translateY(-50%);
+            height: 1.5rem; /* Size of the custom radio button */
+            width: 1.5rem; /* Size of the custom radio button */
+            border: 2px solid #3B82F6; /* Blue border */
+            border-radius: 50%;
+            background: #fff;
+            transition: all 0.2s ease;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); /* Inner shadow for depth */
+        }
+
+        /* Inner dot for selected radio button */
+        .mcq-option label::after {
+            content: '';
+            position: absolute;
+            left: 1.4rem; /* Changed to left for LTR */
+            top: 50%;
+            transform: translateY(-50%);
+            height: 0.7rem; /* Size of the inner dot */
+            width: 0.7rem; /* Size of the inner dot */
+            border-radius: 50%;
+            background: #3B82F6; /* Blue dot */
+            opacity: 0; /* Hidden by default */
+            transition: opacity 0.2s ease;
+        }
+
+        /* Show inner dot when radio is checked */
+        .mcq-option input[type="radio"]:checked + label::after {
+            opacity: 1;
+        }
+
+        /* Change border color when radio is checked */
+        .mcq-option input[type="radio"]:checked + label::before {
+            border-color: #3B82F6;
+            background-color: #EBF5FF; /* Light blue background when checked */
+        }
+
+        /* Hover effect for custom radio */
+        .mcq-option:hover label::before {
+            border-color: #2563EB; /* Darker blue on hover */
+        }
+
+        .score-display {
+            margin-top: 1.5rem;
+            font-weight: 700;
+            color: #3A3A3A;
+            font-size: 1.8rem;
+            text-align: center;
+        }
+        .final-score-message {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #3B82F6;
+            margin-top: 2.5rem;
+            text-align: center;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+        .correct-answer-highlight {
+            color: #059669; /* Green-700 */
+        }
+        .incorrect-answer-highlight {
+            color: #DC2626; /* Red-700 */
+        }
+        .question-feedback {
+            font-size: 1rem;
+            margin-top: 0.8rem;
+            font-weight: 600;
+        }
+        /* Specific styles for review page highlighting */
+        .review-correct-option {
+            color: #059669; /* Green-700 */
+            font-weight: bold;
+        }
+        .review-incorrect-option {
+            color: #DC2626; /* Red-700 */
+            font-weight: bold;
+        }
+        /* New highlight classes with higher brightness and sharper glow */
+        .option-correct-highlight {
+            background-color: #DCFCE7; /* Brighter light green (bg-green-100) */
+            border-color: #10B981; /* More vivid green border (green-500) */
+            box-shadow: 0 0 12px 2px rgba(16, 185, 129, 0.8); /* Sharper, more intense green glow */
+        }
+        .option-incorrect-highlight {
+            background-color: #FEE2E2; /* Brighter light red (bg-red-100) */
+            border-color: #EF4444; /* More vivid red border (red-500) */
+            box-shadow: 0 0 12px 2px rgba(239, 68, 68, 0.8); /* Sharper, more intense red glow */
+        }
+
+        /* Dark Mode Styles */
+        .dark-mode {
+            background-color: #1A202C; /* Dark background */
+            color: #E2E8F0; /* Light text */
+        }
+        .dark-mode .header-bg {
+            background-color: #2D3748; /* Darker header */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+        }
+        .dark-mode .nav-button {
+            background-color: #4A5568; /* Darker nav buttons */
+            color: #E2E8F0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .dark-mode .nav-button:hover {
+            background-color: #2D3748;
+        }
+        .dark-mode .nav-button.active {
+            background-color: #F6AD55; /* Amber in dark mode */
+            color: #1A202C;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+        }
+        .dark-mode .card {
+            background-color: #2D3748; /* Dark card background */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            border-color: #4A5568;
+        }
+        .dark-mode .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
+        }
+        /* Updated styles for section titles and descriptions in dark mode */
+        .dark-mode .section-title {
+            color: #FFFFFF; /* Pure white for titles in dark mode */
+        }
+        .dark-mode .section-description {
+            color: #CBD5E0; /* Light gray for descriptions in dark mode */
+        }
+
+        .dark-mode .question-text {
+            color: #E2E8F0; /* Light question text */
+        }
+        .dark-mode .answer-button, .dark-mode .check-all-button {
+            background-color: #4299E1; /* Blue for action buttons in dark mode */
+            box-shadow: 0 4px 8px rgba(66, 153, 225, 0.3);
+        }
+        .dark-mode .answer-button:hover, .dark-mode .check-all-button:hover {
+            background-color: #3182CE;
+            box-shadow: 0 6px 12px rgba(66, 153, 225, 0.4);
+        }
+        .dark-mode .answer-text {
+            color: #68D391; /* Green for correct answer text */
+        }
+        .dark-mode .mcq-option {
+            background-color: #4A5568; /* Darker option background */
+            border-color: #6A758D;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        .dark-mode .mcq-option:hover {
+            background-color: #2D3748;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+        .dark-mode .mcq-option label {
+            color: #E2E8F0;
+        }
+        .dark-mode .mcq-option label::before {
+            border-color: #4299E1; /* Blue border for radio */
+            background: #2D3748;
+        }
+        .dark-mode .mcq-option label::after {
+            background: #4299E1; /* Blue dot for radio */
+        }
+        .dark-mode .mcq-option input[type="radio"]:checked + label::before {
+            border-color: #4299E1;
+            background-color: #2A4365; /* Darker blue background when checked */
+        }
+        .dark-mode .mcq-option:hover label::before {
+            border-color: #3182CE;
+        }
+        .dark-mode .score-display {
+            color: #E2E8F0;
+        }
+        .dark-mode .final-score-message {
+            color: #4299E1;
+        }
+        .dark-mode .correct-answer-highlight {
+            color: #68D391; /* Green */
+        }
+        .dark-mode .incorrect-answer-highlight {
+            color: #FC8181; /* Red */
+        }
+        /* Dark mode highlight classes with higher brightness and sharper glow */
+        .dark-mode .option-correct-highlight {
+            background-color: #166534; /* Darker, more vivid green */
+            border-color: #22C55E;
+            box-shadow: 0 0 12px 2px rgba(34, 197, 94, 0.8); /* Green glow */
+        }
+        .dark-mode .option-incorrect-highlight {
+            background-color: #B91C1C; /* Darker, more vivid red */
+            border-color: #EF4444;
+            box-shadow: 0 0 12px 2px rgba(239, 68, 68, 0.8); /* Red glow */
+        }
+        .dark-mode footer {
+            border-color: #4A5568;
+        }
+        .dark-mode footer p {
+            color: #A0AEC0;
+        }
+
+        /* Floating Action Buttons Container */
+        .fab-container {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            z-index: 1000;
+        }
+        .fab-button {
+            background-color: #007BFF;
+            color: white;
+            padding: 8px; /* Fixed padding in pixels */
+            border-radius: 9999px; /* Full circle */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px; /* Fixed width in pixels */
+            height: 32px; /* Fixed height in pixels */
+        }
+        .fab-button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+        .fab-button svg {
+            width: 16px; /* Fixed SVG width in pixels */
+            height: 16px; /* Fixed SVG height in pixels */
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <header class="header-bg text-white p-6 shadow-md">
+        <div class="container mx-auto text-center">
+            <h1 class="text-3xl md:text-4xl font-bold">Embedded Systems</h1>
+            <p class="mt-2 text-xl">Ahmed Attia</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-8 max-w-3xl">
+        
+        <nav class="flex flex-wrap justify-center gap-4 mb-8">
+            <button id="tutorial2-tab" class="nav-button active">Tutorial 2</button>
+            <button id="tutorial3-tab" class="nav-button">Tutorial 3</button>
+            <button id="tutorial4-tab" class="nav-button">Tutorial 4</button>
+            <button id="practical-tab" class="nav-button">Practical</button>
+            <button id="incorrect-answers-tab" class="nav-button">الإجابات الخاطئة</button>
+        </nav>
+
+        <section id="tutorial2-section" class="question-section">
+            <h2 class="text-2xl font-bold mb-6 text-gray-700 text-center">Tutorial 2: Electronic Circuit Basics</h2>
+            <p class="mb-6 text-gray-600 text-center">اختر الإجابة الصحيحة أو حدد صواب/خطأ. يمكنك الكشف عن الإجابة الفردية أو التحقق من نتيجتك الكلية.</p>
+            <div id="tutorial2-container"></div>
+            <div class="text-center">
+                <button id="check-all-tutorial2" class="answer-button mx-auto">تحقق من جميع الإجابات</button>
+                <div id="tutorial2-score-display" class="score-display mt-4"></div>
+                <div id="tutorial2-final-score-message" class="final-score-message hidden"></div>
+                <button id="review-incorrect-button-tutorial2" class="nav-button mt-4 hidden mx-auto">مراجعة الأخطاء</button>
+            </div>
+        </section>
+
+        <section id="tutorial3-section" class="question-section hidden">
+            <h2 class="text-2xl font-bold mb-6 text-gray-700 text-center">Tutorial 3: Data</h2>
+            <p class="mb-6 text-gray-600 text-center">اختر الإجابة الصحيحة أو حدد صواب/خطأ. يمكنك الكشف عن الإجابة الفردية أو التحقق من نتيجتك الكلية.</p>
+            <div id="tutorial3-container"></div>
+            <div class="text-center">
+                <button id="check-all-tutorial3" class="answer-button mx-auto">تحقق من جميع الإجابات</button>
+                <div id="tutorial3-score-display" class="score-display mt-4"></div>
+                <div id="tutorial3-final-score-message" class="final-score-message hidden"></div>
+                <button id="review-incorrect-button-tutorial3" class="nav-button mt-4 hidden mx-auto">مراجعة الأخطاء</button>
+            </div>
+        </section>
+
+        <section id="tutorial4-section" class="question-section hidden">
+            <h2 class="text-2xl font-bold mb-6 text-gray-700 text-center">Tutorial 4: Data Types</h2>
+            <p class="mb-6 text-gray-600 text-center">اختر الإجابة الصحيحة أو حدد صواب/خطأ. يمكنك الكشف عن الإجابة الفردية أو التحقق من نتيجتك الكلية.</p>
+            <div id="tutorial4-container"></div>
+            <div class="text-center">
+                <button id="check-all-tutorial4" class="answer-button mx-auto">تحقق من جميع الإجابات</button>
+                <div id="tutorial4-score-display" class="score-display mt-4"></div>
+                <div id="tutorial4-final-score-message" class="final-score-message hidden"></div>
+                <button id="review-incorrect-button-tutorial4" class="nav-button mt-4 hidden mx-auto">مراجعة الأخطاء</button>
+            </div>
+        </section>
+
+        <section id="practical-section" class="question-section hidden">
+            <h2 class="text-2xl font-bold mb-6 text-gray-700 text-center">Practical Questions</h2>
+            <p class="mb-6 text-gray-600 text-center">اختر الإجابة الصحيحة لكل سؤال في القسم العملي.</p>
+            <div id="practical-container"></div>
+            <div class="text-center">
+                <button id="check-all-practical" class="answer-button mx-auto">تحقق من جميع الإجابات</button>
+                <div id="practical-score-display" class="score-display mt-4"></div>
+                <div id="practical-final-score-message" class="final-score-message hidden"></div>
+                <button id="review-incorrect-button-practical" class="nav-button mt-4 hidden mx-auto">مراجعة الأخطاء</button>
+            </div>
+        </section>
+
+        <section id="incorrect-answers-section" class="question-section hidden">
+            <h2 class="text-2xl font-bold mb-6 text-gray-700 text-center">مراجعة الإجابات الخاطئة</h2>
+            <p class="mb-6 text-gray-600 text-center">هنا يمكنك مراجعة جميع الأسئلة التي أجبت عليها بشكل خاطئ.</p>
+            <div id="incorrect-answers-container"></div>
+        </section>
+
+        <footer class="text-center mt-12 py-6 border-t border-gray-300">
+            <div class="container mx-auto text-gray-600 text-center">
+                <p>&copy; 2024 Embedded Systems Quiz. All rights reserved.</p>
+                <p class="text-sm text-gray-500">The provided data is for illustrative and educational purposes only.</p>
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- Floating Action Buttons Container -->
+    <div class="fab-container">
+        <!-- Zoom In Button -->
+        <button id="zoom-in-button" class="fab-button bg-blue-600 hover:bg-blue-500 focus:ring-blue-400">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+            </svg>
+        </button>
+        <!-- Zoom Out Button -->
+        <button id="zoom-out-button" class="fab-button bg-gray-500 hover:bg-gray-400 focus:ring-gray-300">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 10H7" />
+            </svg>
+        </button>
+    </div>
+
+    <script>
+        // Zoom functionality
+        // Get the initial font size of the root HTML element. This will be the base for scaling.
+        const initialRootFontSizePx = parseFloat(getComputedStyle(document.documentElement).fontSize);
+        const zoomIncrementFactor = 1.1; // Factor by which font size increases/decreases (10% per click)
+        const minZoomFactor = 0.8; // Minimum allowed zoom level (80% of initial size)
+        const maxZoomFactor = 2.0; // Maximum allowed zoom level (200% of initial size) - Increased from 1.5
+
+        // Get references to the zoom in and zoom out buttons
+        const zoomInButton = document.getElementById('zoom-in-button');
+        const zoomOutButton = document.getElementById('zoom-out-button');
+        
+        // Function to apply a given zoom factor to the root HTML element's font size
+        function applyZoom(factor) {
+            document.documentElement.style.fontSize = `${initialRootFontSizePx * factor}px`;
+            // Save the current zoom factor to local storage so it persists across sessions
+            localStorage.setItem('currentZoomFactor', factor);
+        }
+
+        // On page load, check if a zoom factor was previously saved in local storage
+        const savedZoomFactor = parseFloat(localStorage.getItem('currentZoomFactor'));
+        if (!isNaN(savedZoomFactor)) {
+            // If a saved factor exists, apply it
+            applyZoom(savedZoomFactor);
+        } else {
+            // If no saved factor, apply the default (1.0) to ensure consistent initial size
+            applyZoom(1.0);
+        }
+
+        // Event listener for the "Zoom In" button
+        zoomInButton.addEventListener('click', () => {
+            // Get the current computed font size of the root element
+            let currentRootSizePx = parseFloat(getComputedStyle(document.documentElement).fontSize);
+            // Calculate the current scaling factor relative to the initial root font size
+            let currentFactor = currentRootSizePx / initialRootFontSizePx;
+            // Calculate the new zoom factor
+            let newFactor = currentFactor * zoomIncrementFactor;
+
+            // Cap the new factor at the maximum zoom limit
+            if (newFactor > maxZoomFactor) {
+                newFactor = maxZoomFactor;
+            }
+            // Apply the new zoom factor
+            applyZoom(newFactor);
+        });
+
+        // Event listener for the "Zoom Out" button
+        zoomOutButton.addEventListener('click', () => {
+            // Get the current computed font size of the root element
+            let currentRootSizePx = parseFloat(getComputedStyle(document.documentElement).fontSize);
+            // Calculate the current scaling factor relative to the initial root font size
+            let currentFactor = currentRootSizePx / initialRootFontSizePx;
+            // Calculate the new zoom factor (decreasing)
+            let newFactor = currentFactor / zoomIncrementFactor;
+
+            // Cap the new factor at the minimum zoom limit
+            if (newFactor < minZoomFactor) {
+                newFactor = minZoomFactor;
+            }
+            // Apply the new zoom factor
+            applyZoom(newFactor);
+        });
+
+        // Data for Tutorial 2: Electronic Circuit Basics
+        const tutorial2Data = [
+            {
+                type: 'mcq',
+                q: "The cut-in voltage for silicon diode is approximately",
+                options: ["0.2 V", "0.6 V", "1.1 V", "1.4 V"],
+                correct: "0.6 V"
+            },
+            {
+                type: 'mcq',
+                q: "The PN junction diode is used as",
+                options: ["An amplifier", "A rectifier", "An oscillator"],
+                correct: "A rectifier"
+            },
+            {
+                type: 'mcq',
+                q: "In the depletion region of an unbiased PN junction diode there are",
+                options: ["Only electrons", "Only holes", "Only fixed ions"],
+                correct: "Only fixed ions"
+            },
+            {
+                type: 'mcq',
+                q: "What is the primary function of a diode?",
+                options: ["To store charge", "To amplify signals", "To allow current flow in one direction only", "To generate AC voltage"],
+                correct: "To allow current flow in one direction only"
+            },
+            {
+                type: 'mcq',
+                q: "What is the main purpose of a Zener diode?",
+                options: ["To convert AC to DC", "To regulate voltage", "To amplify signals", "To store energy"],
+                correct: "To regulate voltage"
+            },
+            {
+                type: 'mcq',
+                q: "Which type of diode is used to convert light into an electrical signal?",
+                options: ["Zener diode", "Light Emitting Diode (LED)", "Photodiode", "Schottky diode"],
+                correct: "Photodiode"
+            },
+            {
+                type: 'mcq',
+                q: "In a half-wave rectifier, how much of the AC signal is converted into DC?",
+                options: ["25%", "50%", "75%", "100%"],
+                correct: "50%"
+            },
+            {
+                type: 'mcq',
+                q: "The Op-Amp amplifies between two input signals, known as the differential input voltage, in its open-loop operation.",
+                options: ["The sum", "The product", "The difference", "The average"],
+                correct: "The difference"
+            },
+            {
+                type: 'mcq',
+                q: "What is the phase shift between the input and output of an inverting Op-Amp?",
+                options: ["0°", "90°", "180°", "270°"],
+                correct: "180°"
+            },
+            {
+                type: 'mcq',
+                q: "How many terminals does a standard operational amplifier (Op-Amp) have?",
+                options: ["2", "3", "5", "8"],
+                correct: "5" // Changed correct answer for question 10 in Tutorial 2
+            },
+            {
+                type: 'mcq',
+                q: "Which of the following is NOT a terminal of an operational amplifier (Op-Amp)?",
+                options: ["Inverting input", "Non-inverting input", "Ground", "Collector"],
+                correct: "Collector"
+            },
+            {
+                type: 'mcq',
+                q: "How many terminals does a Bipolar Junction Transistor (BJT) have?",
+                options: ["2", "3", "4", "5"],
+                correct: "3"
+            },
+            {
+                type: 'mcq',
+                q: "Which of the following are the terminals of a BJT?",
+                options: ["Anode, Cathode, Base", "Drain, Source, Gate", "Collector, Base, Emitter", "Input, Output, Ground"],
+                correct: "Collector, Base, Emitter"
+            },
+            {
+                type: 'mcq',
+                q: "What is the basic structure of a Bipolar Junction Transistor (BJT)?",
+                options: ["Two P-type and one N-type semiconductor layers", "Two N-type and one P-type semiconductor layers", "A single P-N junction", "Both a) and b)"],
+                correct: "Both a) and b)"
+            },
+            {
+                type: 'mcq',
+                q: "What is the main application of BJTs in embedded systems?",
+                options: ["Wireless communication", "Power amplification and switching", "Image processing", "Data storage"],
+                correct: "Power amplification and switching"
+            },
+            {
+                type: 'mcq',
+                q: "What is the primary disadvantage of BJTs in embedded applications compared to MOSFETS?",
+                options: ["Lower switching speed and higher power dissipation", "Higher input impedance", "Requires fewer components"],
+                correct: "Lower switching speed and higher power dissipation"
+            },
+            {
+                type: 'mcq',
+                q: "What is the main application of MOSFETs in embedded systems?",
+                options: ["Data storage", "Power management and motor control", "Display screens", "RF signal reception"],
+                correct: "Power management and motor control"
+            },
+            {
+                type: 'mcq',
+                q: "Which of the following is NOT a MOSFET terminal?",
+                options: ["Gate", "Collector", "Drain", "Source"],
+                correct: "Collector"
+            },
+            {
+                type: 'mcq',
+                q: "Which MOSFET terminal controls the current flow between source and drain?",
+                options: ["Gate", "Drain", "Source", "Substrate"],
+                correct: "Gate"
+            }
+        ];
+
+        // Data for Tutorial 3: Data
+        const tutorial3Data = [
+            {
+                type: 'mcq',
+                q: "Which of the following best defines 'data objects'?",
+                options: ["A system of organizing files", "The representation of real-world items in a database", "A collection of operations performed on data", "A set of executable functions"],
+                correct: "The representation of real-world items in a database"
+            },
+            {
+                type: 'mcq',
+                q: "In a database, what is an attribute?",
+                options: ["The relationship between two objects", "The value or property of an object", "A collection of related data objects", "A method for querying the data"],
+                correct: "The value or property of an object"
+            },
+            {
+                type: 'mcq',
+                q: "Which of the following can be considered an attribute in a customer database?",
+                options: ["Customer's first name", "Customer's purchase history", "Customer's membership level", "All of the above"],
+                correct: "All of the above"
+            },
+            {
+                type: 'mcq',
+                q: "In the context of databases, an object is:",
+                options: ["A record representing a real-world entity", "A function that manipulates data", "A set of operations performed on data", "A schema defining relationships between tables"],
+                correct: "A record representing a real-world entity"
+            },
+            {
+                type: 'mcq',
+                q: "Which of the following is an operation that cannot be performed on nominal data?",
+                options: ["Sorting", "Comparison", "Arithmetic calculation", "Classification"],
+                correct: "Arithmetic calculation"
+            },
+            {
+                type: 'mcq',
+                q: "Which operation is valid for ordinal data?",
+                options: ["Finding the median", "Finding the mean", "Performing multiplication", "Calculating ratios"],
+                correct: "Finding the median"
+            },
+            {
+                type: 'mcq',
+                q: "In interval data, which of the following is NOT meaningful?",
+                options: ["The difference between values", "The addition of values", "The ratio of two values", "The comparison of differences between values"],
+                correct: "The ratio of two values"
+            },
+            {
+                type: 'mcq',
+                q: "Which type of data can you perform all arithmetic operations, including addition, subtraction, multiplication, and division?",
+                options: ["Nominal", "Ordinal", "Interval", "Ratio"],
+                correct: "Ratio"
+            },
+            {
+                type: 'mcq',
+                q: "Which of the following operations can be performed on nominal data?",
+                options: ["Addition", "Multiplication", "Classification", "Subtraction"],
+                correct: "Classification"
+            },
+            {
+                type: 'mcq',
+                q: "Which of the following is an example of an ordinal attribute?", // Updated question text
+                options: ["Customer's gender", "Temperature in Celsius", "Ranking of employees: 1st, 2nd, 3rd", "Employee's age"], // Updated options
+                correct: "Ranking of employees: 1st, 2nd, 3rd" // Updated correct answer to 'c'
+            },
+            {
+                type: 'mcq',
+                q: "Which of the following is an example of a ratio attribute?",
+                options: ["Height of a person", "Customer satisfaction level", "Rank in a race", "Car model"],
+                correct: "Height of a person"
+            },
+            {
+                type: 'true_false',
+                q: "Ordinal attributes have a meaningful order or ranking, but the differences between values are not measurable.",
+                a: true
+            },
+            {
+                type: 'mcq',
+                q: "Which of the following is an example of a Nominal attribute?",
+                options: ["Age", "Blood type (A, B, AB, O)", "Rank in a competition", "Weight in kilograms"],
+                correct: "Blood type (A, B, AB, O)"
+            },
+            {
+                type: 'mcq',
+                q: "Which of the following is an example of Ordinal data",
+                options: ["Monthly income", "Education level (High School, Bachelor's, Master's)", "Age"],
+                correct: "Education level (High School, Bachelor's, Master's)"
+            },
+            {
+                type: 'mcq',
+                q: "Which of the following is an example of Interval data?",
+                options: ["Salary of employees", "Temperature in Celsius", "Ranking in a contest", "The number of children in a family"],
+                correct: "Temperature in Celsius"
+            }
+        ];
+
+        // Data for Tutorial 4: Data Types
+        const tutorial4Data = [
+            {
+                type: 'mcq',
+                q: "What is a characteristic of record data?",
+                options: ["Each record has a different number of attributes", "Each record has a fixed set of attributes", "Records contain only textual descriptions", "Each record varies in data type and structure"],
+                correct: "Each record has a fixed set of attributes"
+            },
+            {
+                type: 'mcq',
+                q: "In record data, a record is typically represented as:",
+                options: ["A hierarchical tree", "A collection of unrelated values", "A row with fixed columns for attributes", "A set of images"],
+                correct: "A row with fixed columns for attributes"
+            },
+            {
+                type: 'mcq',
+                q: "According to the data matrix description, how are data objects represented?",
+                options: ["As paragraphs of text", "As points in a multi-dimensional space", "As a sequence of unstructured records", "As a list of unrelated items"],
+                correct: "As points in a multi-dimensional space"
+            },
+            {
+                type: 'mcq',
+                q: "In document data, what does each entry in the matrix represent?",
+                options: ["Number of attributes", "Number of characters in a document", "Number of times a term appears in a document", "The length of the document in pages"],
+                correct: "Number of times a term appears in a document"
+            },
+            {
+                type: 'mcq',
+                q: "Which of the following is an example of record data?",
+                options: ["A list of customer names, ages, and addresses stored in a table", "A collection of tweets without any structure", "A folder of images", "A random collection of words"],
+                correct: "A list of customer names, ages, and addresses stored in a table"
+            },
+            {
+                type: 'mcq',
+                q: "What is a good example of document data?",
+                options: ["A text file containing the full text of several articles, with word counts stored for each article", "A database with sales figures", "A matrix of distances between cities", "A list of employees and their salaries"],
+                correct: "A text file containing the full text of several articles, with word counts stored for each article"
+            },
+            {
+                type: 'mcq',
+                q: "Which situation is an example of transaction data?",
+                options: ["A shopping cart that records items bought together, like milk, bread, and butter", "A survey recording people's favorite color", "A medical record with patient vitals", "A matrix of student grades"],
+                correct: "A shopping cart that records items bought together, like milk, bread, and butter"
+            },
+            {
+                type: 'mcq',
+                q: "Which of the following best describes graph data?",
+                options: ["Data where objects are connected by links or edges", "Data stored in a simple table", "A collection of unrelated records", "A set of isolated documents"],
+                correct: "Data where objects are connected by links or edges"
+            },
+            {
+                type: 'mcq',
+                q: "Which is a good example of graph data?",
+                options: ["A molecule where atoms are nodes and chemical bonds are edges", "A spreadsheet with student grades", "A shopping receipt listing items", "A text file full of tweets"],
+                correct: "A molecule where atoms are nodes and chemical bonds are edges"
+            },
+            {
+                type: 'mcq',
+                q: "How does a set of webpages and their links form a graph?",
+                options: ["Each webpage is a node and hyperlinks are edges", "Each hyperlink is treated as a separate record", "Pages are sorted alphabetically", "Pages are just stored as plain text without relationships"],
+                correct: "Each webpage is a node and hyperlinks are edges"
+            },
+            {
+                type: 'mcq',
+                q: "Which of the following is NOT typically represented as graph data?",
+                options: ["Social networks like Facebook", "Flight connections between airports", "Shopping carts with multiple items", "Webpages connected by hyperlinks"],
+                correct: "Shopping carts with multiple items"
+            },
+            {
+                type: 'mcq',
+                q: "What characterizes ordered data in general?",
+                options: ["The sequence or position of data points is important", "The data points are completely independent", "Data points are organized randomly", "Data is unstructured and chaotic"],
+                correct: "The sequence or position of data points is important"
+            },
+            {
+                type: 'mcq',
+                q: "Which is an example of spatial data?",
+                options: ["The list of students in a school", "The locations of restaurants on a map", "The number of books in a library", "A set of random tweets"],
+                correct: "The locations of restaurants on a map"
+            },
+            {
+                type: 'mcq',
+                q: "Which situation best describes temporal data?",
+                options: ["A table showing different countries and their capitals", "Temperature recorded every hour during a day", "Locations of cities on a world map", "A list of favorite movies"],
+                correct: "Temperature recorded every hour during a day"
+            },
+            {
+                type: 'mcq',
+                q: "Which of the following best describes noise in a dataset?",
+                options: ["Data points that are very similar", "Random errors or meaningless data that distort the true values", "Correct but incomplete data", "Data that is neatly organized"],
+                correct: "Random errors or meaningless data that distort the true values"
+            },
+            {
+                type: 'mcq',
+                q: "What is an outlier in data?",
+                options: ["A value that is consistent with the majority of data", "A missing value", "A value significantly different from most other values", "A duplicate of another record"],
+                correct: "A value significantly different from most other values"
+            },
+            {
+                type: 'mcq',
+                q: "In an embedded system, which of the following would be considered record data?",
+                options: ["Temperature, humidity, and pressure recorded together by a weather sensor", "A random audio recording", "A video stream from a drone", "A simple blinking LED"],
+                correct: "Temperature, humidity, and pressure recorded together by a weather sensor"
+            },
+            {
+                type: 'mcq',
+                q: "In an embedded system, a data matrix could represent:",
+                options: ["A table of sensor readings over different time intervals", "A single signal from a temperature sensor", "A blinking pattern from an LED", "A robot moving randomly without storing data"],
+                correct: "A table of sensor readings over different time intervals"
+            },
+            {
+                type: 'mcq',
+                q: "Which is an example of transaction data in an embedded retail system?",
+                options: ["A list of customer IDs", "Data from multiple items scanned during a single purchase", "C) A record of employee names", "D) A random alarm activation log"],
+                correct: "Data from multiple items scanned during a single purchase"
+            },
+            {
+                type: 'mcq',
+                q: "What is an example of noise in an embedded sensor network?",
+                options: ["An occasional random spike in a temperature reading due to electrical interference", "A missing temperature value", "A repeated humidity record", "A completely accurate measurement"],
+                correct: "An occasional random spike in a temperature reading due to electrical interference"
+            },
+            {
+                type: 'mcq',
+                q: "In an embedded medical device, missing data might happen when:",
+                options: ["The sensor temporarily disconnects and does not record heartbeats", "The sensor records exactly the expected values", "The same heart rate value is recorded twice", "Noise causes minor fluctuations in readings"],
+                correct: "The sensor temporarily disconnects and does not record heartbeats"
+            },
+            {
+                type: 'mcq',
+                q: "What is an example of wrong data from an embedded GPS device?",
+                options: ["Reporting a location that is hundreds of kilometers away from the actual position", "Not recording any data", "Recording correct locations with slight delays", "Slight signal variations due to noise"],
+                correct: "Reporting a location that is hundreds of kilometers away from the actual position"
+            }
+        ];
+
+        // Data for Practical Questions (from اساله العملي embeded - Copy.html)
+        const practicalData = [
+            {
+                type: 'mcq',
+                q: "Which register in AVR microcontrollers is used to configure a pin as input or output?",
+                options: ["PORTX", "PINX", "DDRx", "SPCR"],
+                correct: "DDRx"
+            },
+            {
+                type: 'mcq',
+                q: "To read the current logic level of an input pin on PORTD, which register should be used?",
+                options: ["PORTD", "DDRD", "PIND", "SPDR"],
+                correct: "PIND"
+            },
+            {
+                type: 'mcq',
+                q: "What is the function of the PORTx register when a pin is configured as output?",
+                options: ["It disables the pin", "It reads analog values", "It sets the output HIGH or LOW", "It configures the direction"],
+                correct: "It sets the output HIGH or LOW"
+            },
+            {
+                type: 'mcq',
+                q: "What will the following code do?\nDDRB = 0xFF;\nPORTB = 0x00;", // Corrected syntax
+                options: ["Configure all PORTB pins as inputs and set them LOW", "Configure all PORTB pins as outputs and set them LOW", "Configure all PORTB pins as outputs and set them HIGH", "Configure all PORTB pins as inputs and set them HIGH"],
+                correct: "Configure all PORTB pins as outputs and set them LOW"
+            },
+            {
+                type: 'mcq',
+                q: "What does the Timer/Counter register (e.g., TCNT0) do in AVR microcontrollers?",
+                options: ["Sets the baud rate for UART", "Holds the current count value of the timer", "Stores the ADC conversion result", "Enables or disables external interrupts"],
+                correct: "Holds the current count value of the timer"
+            },
+            {
+                type: 'mcq',
+                q: "In CTC mode, what happens when the timer value matches the OCR (Output Compare Register) value?",
+                options: ["Timer stops", "Timer resets to 0", "Timer overflows", "Interrupt is disabled"],
+                correct: "Timer resets to 0"
+            },
+            {
+                type: 'mcq',
+                q: "What is the primary advantage of using interrupts in a microcontroller-based system?",
+                options: ["Reduces the need for memory", "Increases power consumption", "Allows the CPU to respond immediately to external events", "Makes the program run slower"],
+                correct: "Allows the CPU to respond immediately to external events"
+            },
+            {
+                type: 'mcq',
+                q: "What happens when an interrupt occurs in an AVR microcontroller?",
+                options: ["The microcontroller shuts down", "The current program is permanently stopped", "The microcontroller jumps to a special routine to handle the event", "Nothing happens unless a timer is running"],
+                correct: "The microcontroller jumps to a special routine to handle the event"
+            },
+            {
+                type: 'mcq',
+                q: "What is the name of the function that automatically executes when a specific interrupt occurs?",
+                options: ["Main routine", "Watchdog", "Interrupt Service Routine (ISR)", "Polling function"],
+                correct: "Interrupt Service Routine (ISR)"
+            },
+            {
+                type: 'mcq',
+                q: "What is the primary function of an ADC in AVR microcontrollers?",
+                options: ["Convert digital data to analog", "Convert analog signals to digital values", "Send data over serial", "Control voltage levels"],
+                correct: "Convert analog signals to digital values"
+            },
+            {
+                type: 'mcq',
+                q: "What is the default reference voltage used for ADC in Arduino/AVR?",
+                options: ["12V", "3.3V", "5V", "9V"],
+                correct: "5V"
+            },
+            {
+                type: 'mcq',
+                q: "Which Arduino function is used to read analog input?",
+                options: ["digitalRead()", "analogRead()", "readADC()", "adcStart()"],
+                correct: "analogRead()"
+            },
+            {
+                type: 'mcq',
+                q: "What Arduino function is used to turn an LED ON or OFF?",
+                options: ["analogWrite()", "digitalRead()", "pinMode()", "digitalWrite()"],
+                correct: "digitalWrite()"
+            },
+            {
+                type: 'mcq',
+                q: "What does the following code do?\ndigitalWrite(13, HIGH);\ndelay(1000);\ndigitalWrite(13, LOW);",
+                options: ["Turns off the LED", "Turns on the LED continuously", "Blinks the LED for 1 second", "Dims the LED"],
+                correct: "Blinks the LED for 1 second"
+            },
+            {
+                type: 'mcq',
+                q: "Before controlling an LED pin, you should configure it as:",
+                options: ["Input", "Analog", "Output", "Interrupt"],
+                correct: "Output"
+            },
+            {
+                type: 'mcq',
+                q: "Why is a motor driver (like L298N) used with a microcontroller?",
+                options: ["To change signal types", "To reduce power", "To allow the microcontroller to handle high current safely", "To read analog signals"],
+                correct: "To allow the microcontroller to handle high current safely"
+            },
+            {
+                type: 'mcq',
+                q: "What is the function of PWM in motor control?",
+                options: ["Turning motor ON/OFF only", "Controlling motor speed", "Changing motor type", "Reversing direction"],
+                correct: "Controlling motor speed"
+            },
+            {
+                type: 'mcq',
+                q: "What does a typical DC motor need for direction control?",
+                options: ["One signal wire", "An analog input", "Two digital pins (IN1 and IN2)", "Only ground"],
+                correct: "Two digital pins (IN1 and IN2)"
+            },
+            {
+                type: 'mcq',
+                q: "What does '16x2 LCD' mean?",
+                options: ["16 pixels by 2 pixels", "16 characters per row, 2 rows", "16 lines and 2 columns", "16-bit data and 2-line display"],
+                correct: "16 characters per row, 2 rows"
+            },
+            {
+                type: 'mcq',
+                q: "Which library is commonly used to control a text LCD in Arduino?",
+                options: ["Wire.h", "LiquidCrystal.h", "Servo.h", "LCDtext.h"],
+                correct: "LiquidCrystal.h"
+            },
+            {
+                type: 'mcq',
+                q: "What is the first step to display text on an LCD in Arduino?",
+                options: ["Use lcd.print()", "Declare pins and initialize LCD with lcd.begin()", "Call analogWrite()", "Enable backlight"],
+                correct: "Declare pins and initialize LCD with lcd.begin()"
+            },
+            {
+                type: 'mcq',
+                q: "What is one advantage of using an OLED display over a standard LCD?",
+                options: ["Consumes more power", "Requires backlight", "Sharper, high-contrast graphics", "Only works in bright light"],
+                correct: "Sharper, high-contrast graphics"
+            },
+            {
+                type: 'mcq',
+                q: "What kind of information can be displayed on an OLED?",
+                options: ["Only numbers", "Only sensor data", "Text and graphics", "Only voltage readings"],
+                correct: "Text and graphics"
+            },
+            {
+                type: 'mcq',
+                q: "What is the role of pinMode() in Arduino C when programming AVR microcontrollers?",
+                options: ["It sets the voltage level", "It sets a pin as input or output", "It disables interrupts", "It reads analog values"],
+                correct: "It sets a pin as input or output"
+            },
+            {
+                type: 'mcq',
+                q: "Which tool is commonly used to write and debug code for AVR microcontrollers?",
+                options: ["Photoshop", "Arduino IDE or Atmel Studio", "MS Word", "MATLAB"],
+                correct: "Arduino IDE or Atmel Studio"
+            }
+        ];
+
+        // Global array to store incorrect answers for review
+        let incorrectAnswersLog = [];
+
+        // Define sections and their associated data and IDs
+        const sections = {
+            'tutorial2': {
+                data: tutorial2Data,
+                containerId: 'tutorial2-container',
+                scoreDisplayId: 'tutorial2-score-display',
+                finalScoreMessageId: 'tutorial2-final-score-message',
+                checkAllButtonId: 'check-all-tutorial2',
+                reviewButtonId: 'review-incorrect-button-tutorial2',
+                render: renderQuizSection
+            },
+            'tutorial3': {
+                data: tutorial3Data,
+                containerId: 'tutorial3-container',
+                scoreDisplayId: 'tutorial3-score-display',
+                finalScoreMessageId: 'tutorial3-final-score-message',
+                checkAllButtonId: 'check-all-tutorial3',
+                reviewButtonId: 'review-incorrect-button-tutorial3',
+                render: renderQuizSection
+            },
+            'tutorial4': {
+                data: tutorial4Data,
+                containerId: 'tutorial4-container',
+                scoreDisplayId: 'tutorial4-score-display',
+                finalScoreMessageId: 'tutorial4-final-score-message',
+                checkAllButtonId: 'check-all-tutorial4',
+                reviewButtonId: 'review-incorrect-button-tutorial4',
+                render: renderQuizSection
+            },
+            'practical': { // New practical section
+                data: practicalData,
+                containerId: 'practical-container',
+                scoreDisplayId: 'practical-score-display',
+                finalScoreMessageId: 'practical-final-score-message',
+                checkAllButtonId: 'check-all-practical',
+                reviewButtonId: 'review-incorrect-button-practical',
+                render: renderQuizSection
+            },
+            'incorrect-answers': {
+                containerId: 'incorrect-answers-container',
+                render: renderIncorrectAnswers
+            }
+        };
+
+        let activeSection = 'tutorial2'; // Set the default active section to 'tutorial2'
+
+        // Function to show a specific section and hide all others
+        function showSection(sectionId) {
+            // Hide all elements with the class 'question-section'
+            document.querySelectorAll('.question-section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            // Show the selected section by removing the 'hidden' class
+            document.getElementById(`${sectionId}-section`).classList.remove('hidden');
+
+            // Deactivate all navigation buttons by removing the 'active' class
+            document.querySelectorAll('.nav-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            // Activate the current navigation button by adding the 'active' class
+            document.getElementById(`${sectionId}-tab`).classList.add('active');
+            activeSection = sectionId; // Update the active section tracker
+            sections[activeSection].render(); // Call the render function for the newly active section
+        }
+
+        // Function to render the quiz questions for the active section
+        function renderQuizSection() {
+            const section = sections[activeSection]; // Get the data for the active section
+            const container = document.getElementById(section.containerId); // Get the container to display questions
+            container.innerHTML = ''; // Clear any previously rendered questions
+
+            const optionLabels = ['A', 'B', 'C', 'D', 'E', 'F']; // Labels for MCQ options (A, B, C, etc.)
+
+            // Iterate over each question item in the section's data
+            section.data.forEach((item, index) => {
+                const questionCard = document.createElement('div');
+                questionCard.className = 'card'; // Apply common card styling
+                questionCard.id = `${activeSection}-card-${index}`; // Assign a unique ID to each question card
+
+                if (item.type === 'mcq') {
+                    // Generate HTML for Multiple Choice Questions
+                    let optionsHtml = '';
+                    item.options.forEach((option, optIndex) => {
+                        const label = optionLabels[optIndex] || ''; // Get the corresponding letter label
+                        optionsHtml += `
+                            <div class="mcq-option" onclick="this.querySelector('input[type=radio]').click()">
+                                <input type="radio" id="${activeSection}-mcq-${index}-opt-${optIndex}" name="${activeSection}-mcq-${index}" value="${option}">
+                                <label for="${activeSection}-mcq-${index}-opt-${optIndex}">${label}. ${option}</label>
+                            </div>
+                        `;
+                    });
+                    questionCard.innerHTML = `
+                        <p class="question-text">${index + 1}- ${item.q}</p>
+                        <div class="mb-4">${optionsHtml}</div>
+                        <button class="answer-button" data-index="${index}" data-section-id="${activeSection}" onclick="showAnswer(this)">عرض الإجابة</button>
+                        <p class="answer-text" id="${activeSection}-correct-answer-${index}"></p>
+                        <div class="question-feedback" id="${activeSection}-feedback-${index}"></div>
+                    `;
+                } else if (item.type === 'true_false') {
+                    // Generate HTML for True/False Questions
+                    questionCard.innerHTML = `
+                        <p class="question-text">${index + 1}- ${item.q}</p>
+                        <div class="mb-4">
+                            <div class="mcq-option" onclick="this.querySelector('input[type=radio]').click()">
+                                <input type="radio" id="${activeSection}-tf-${index}-true" name="${activeSection}-tf-${index}" value="true">
+                                <label for="${activeSection}-tf-${index}-true">صحيح</label>
+                            </div>
+                            <div class="mcq-option" onclick="this.querySelector('input[type=radio]').click()">
+                                <input type="radio" id="${activeSection}-tf-${index}-false" name="${activeSection}-tf-${index}" value="false">
+                                <label for="${activeSection}-tf-${index}-false">خطأ</label>
+                            </div>
+                        </div>
+                        <button class="answer-button" data-index="${index}" data-section-id="${activeSection}" onclick="showAnswer(this)">عرض الإجابة</button>
+                        <p class="answer-text" id="${activeSection}-correct-answer-${index}"></p>
+                        <div class="question-feedback" id="${activeSection}-feedback-${index}"></div>
+                    `;
+                }
+                container.appendChild(questionCard); // Add the constructed question card to the container
+            });
+
+            // Attach event listener to the "Check All Answers" button for the current section
+            const checkAllBtn = document.getElementById(section.checkAllButtonId);
+            if (checkAllBtn) {
+                checkAllBtn.onclick = () => checkAllAnswers(activeSection);
+            }
+           
+            // Clear previous score display when rendering a new section
+            const scoreDisplay = document.getElementById(section.scoreDisplayId);
+            if (scoreDisplay) {
+                scoreDisplay.textContent = '';
+            }
+            const finalScoreMsg = document.getElementById(section.finalScoreMessageId);
+            if (finalScoreMsg) {
+                finalScoreMsg.classList.add('hidden'); // Hide final score message on re-render
+            }
+            const reviewBtn = document.getElementById(section.reviewButtonId);
+            if (reviewBtn) {
+                 reviewBtn.classList.add('hidden'); // Hide review button on re-render
+            }
+        }
+
+        // Function to display the correct answer for a single question
+        function showAnswer(buttonElement) {
+            const sectionId = buttonElement.dataset.sectionId; // Get the section ID from the button's data attribute
+            const index = buttonElement.dataset.index; // Get the question index
+            const sectionData = sections[sectionId].data; // Get the data for the relevant section
+            const item = sectionData[index]; // Get the specific question item
+            const answerDisplay = document.getElementById(`${sectionId}-correct-answer-${index}`); // Get the element to display the correct answer
+            const feedbackDisplay = document.getElementById(`${sectionId}-feedback-${index}`); // Get the element for feedback
+            const questionCard = document.getElementById(`${sectionId}-card-${index}`);
+            
+            // Clear previous highlights from all options in this card
+            const allOptions = questionCard.querySelectorAll('.mcq-option');
+            allOptions.forEach(opt => {
+                opt.classList.remove('option-correct-highlight', 'option-incorrect-highlight');
+            });
+
+            answerDisplay.style.display = 'block'; // Make the answer display visible
+            feedbackDisplay.textContent = ''; // Clear any previous feedback
+            feedbackDisplay.classList.remove('correct-answer-highlight', 'incorrect-answer-highlight'); // Reset feedback styling
+
+            let selectedValue = null; // Variable to store the user's selected value
+            let isCorrect = false; // Flag to check if the user's answer is correct
+            let selectedOptionElement = null; // To store the div of the selected option
+
+            if (item.type === 'mcq') {
+                // For MCQ type questions
+                const selectedRadio = document.querySelector(`input[name="${sectionId}-mcq-${index}"]:checked`);
+                selectedValue = selectedRadio ? selectedRadio.value : null; // Get the value of the selected radio button
+                isCorrect = (selectedValue === item.correct); // Compare with the correct answer
+                answerDisplay.textContent = `الإجابة الصحيحة: ${item.correct}`; // Display the correct answer
+
+                if (selectedRadio) {
+                    selectedOptionElement = selectedRadio.closest('.mcq-option');
+                }
+            } else if (item.type === 'true_false') {
+                // For True/False type questions
+                const selectedRadio = document.querySelector(`input[name="${sectionId}-tf-${index}"]:checked`);
+                selectedValue = selectedRadio ? (selectedRadio.value === 'true') : null; // Get boolean value of selected option
+                isCorrect = (selectedValue === item.a); // Compare with the correct answer
+                const correctAnswerText = item.a ? 'صحيح (√)' : 'خطأ (X)'; // Text for true/false correct answer
+                answerDisplay.textContent = `الإجابة الصحيحة: ${correctAnswerText}`; // Display the correct answer
+
+                if (selectedRadio) {
+                    selectedOptionElement = selectedRadio.closest('.mcq-option');
+                }
+            }
+
+            if (selectedValue !== null) {
+                // If an option was selected
+                if (isCorrect) {
+                    answerDisplay.textContent += ' 🎉'; // Add a celebratory emoji if correct
+                    answerDisplay.classList.remove('incorrect-answer-highlight');
+                    answerDisplay.classList.add('correct-answer-highlight'); // Apply green highlight
+                    if (selectedOptionElement) {
+                        selectedOptionElement.classList.add('option-correct-highlight');
+                    }
+                } else {
+                    answerDisplay.classList.remove('correct-answer-highlight');
+                    answerDisplay.classList.add('incorrect-answer-highlight'); // Apply red highlight if incorrect
+                    if (selectedOptionElement) {
+                        selectedOptionElement.classList.add('option-incorrect-highlight');
+                    }
+                    // Highlight the correct answer in green
+                    let correctOptionElement = null;
+                    if (item.type === 'mcq') {
+                        correctOptionElement = Array.from(allOptions).find(opt => opt.querySelector('input').value === item.correct);
+                    } else if (item.type === 'true_false') {
+                        correctOptionElement = Array.from(allOptions).find(opt => (opt.querySelector('input').value === 'true' && item.a) || (opt.querySelector('input').value === 'false' && !item.a));
+                    }
+                    if (correctOptionElement) {
+                        correctOptionElement.classList.add('option-correct-highlight');
+                    }
+                }
+            } else {
+                // If no option was selected, just show the correct answer without specific highlights
+                answerDisplay.classList.remove('correct-answer-highlight', 'incorrect-answer-highlight');
+                answerDisplay.style.color = '#4ECDC4'; // Revert to a default color
+            }
+        }
+
+        // Function to check all answers in a specific section and display results
+        function checkAllAnswers(sectionId) {
+            let score = 0; // Initialize score for the current section
+            const section = sections[sectionId]; // Get the data and elements for the current section
+            const sectionData = section.data; // Get the array of questions for the section
+            const totalQuestions = sectionData.length; // Get the total number of questions
+            const finalScoreMessageElement = document.getElementById(section.finalScoreMessageId); // Element for final score message
+            const reviewButton = document.getElementById(section.reviewButtonId); // Review incorrect answers button
+
+            // Filter out previously logged incorrect answers for this section to avoid duplicates on re-check
+            incorrectAnswersLog = incorrectAnswersLog.filter(log => log.sectionId !== sectionId);
+
+            // Iterate over each question in the section
+            sectionData.forEach((item, index) => {
+                const questionCard = document.getElementById(`${sectionId}-card-${index}`);
+                const feedbackDisplay = document.getElementById(`${sectionId}-feedback-${index}`); // Feedback element for the question
+                const answerDisplay = document.getElementById(`${sectionId}-correct-answer-${index}`); // Correct answer display element
+
+                feedbackDisplay.textContent = ''; // Clear previous feedback text
+                feedbackDisplay.className = 'question-feedback'; // Reset feedback styling
+                answerDisplay.classList.remove('correct-answer-highlight', 'incorrect-answer-highlight');
+                answerDisplay.style.display = 'none';
+
+                const allOptionsInCard = questionCard.querySelectorAll('.mcq-option');
+                allOptionsInCard.forEach(opt => {
+                    opt.classList.remove('option-correct-highlight', 'option-incorrect-highlight');
+                });
+
+                let selectedValue = null; // Stores the user's selected answer value
+                let isCorrect = false; // Flag for correctness
+                let userAnswerText = 'لم يتم الإجابة'; // Default text if no answer is selected
+                let selectedOptionElement = null; // To store the div of the selected option
+
+                if (item.type === 'mcq') {
+                    // Handle Multiple Choice Questions
+                    const selectedRadio = document.querySelector(`input[name="${sectionId}-mcq-${index}"]:checked`);
+                    selectedValue = selectedRadio ? selectedRadio.value : null;
+                    isCorrect = (selectedValue === item.correct);
+                    userAnswerText = selectedValue || userAnswerText; // Update user answer text
+                    if (selectedRadio) {
+                        selectedOptionElement = selectedRadio.closest('.mcq-option');
+                    }
+                } else if (item.type === 'true_false') {
+                    // Handle True/False Questions
+                    const selectedRadio = document.querySelector(`input[name="${sectionId}-tf-${index}"]:checked`);
+                    selectedValue = selectedRadio ? (selectedRadio.value === 'true') : null;
+                    isCorrect = (selectedValue === item.a);
+                    userAnswerText = selectedValue !== null ? (selectedValue ? 'صحيح' : 'خطأ') : 'لم يتم الإجابة';
+                    if (selectedRadio) {
+                        selectedOptionElement = selectedRadio.closest('.mcq-option');
+                    }
+                }
+
+                if (selectedValue === null) {
+                    // If no answer was selected
+                    feedbackDisplay.textContent = 'الرجاء اختيار إجابة لهذا السؤال.';
+                    feedbackDisplay.classList.add('incorrect-answer-highlight'); // Highlight feedback in red
+
+                    // Show the correct answer in red
+                    answerDisplay.textContent = `الإجابة الصحيحة: ${item.type === 'true_false' ? (item.a ? 'صحيح (√)' : 'خطأ (X)') : item.correct}`;
+                    answerDisplay.style.display = 'block';
+                    answerDisplay.classList.add('incorrect-answer-highlight');
+                    
+                    // Highlight the correct option in green
+                    let correctOptionElement = null;
+                    if (item.type === 'mcq') {
+                        correctOptionElement = Array.from(allOptionsInCard).find(opt => opt.querySelector('input').value === item.correct);
+                    } else if (item.type === 'true_false') {
+                        correctOptionElement = Array.from(allOptionsInCard).find(opt => (opt.querySelector('input').value === 'true' && item.a) || (opt.querySelector('input').value === 'false' && !item.a));
+                    }
+                    if (correctOptionElement) {
+                        correctOptionElement.classList.add('option-correct-highlight');
+                    }
+
+
+                    // Log this as an incorrect attempt
+                    incorrectAnswersLog.push({
+                        sectionId: sectionId,
+                        questionNumber: index + 1,
+                        questionText: item.q,
+                        correctAnswer: item.type === 'true_false' ? (item.a ? 'صحيح (√)' : 'خطأ (X)') : item.correct,
+                        userAnswer: userAnswerText, // Log 'Not Answered'
+                        options: item.options || ['صحيح', 'خطأ'] // Store options for review
+                    });
+                } else if (isCorrect) {
+                    // If the answer is correct
+                    score++; // Increment the score
+                    feedbackDisplay.textContent = 'إجابة صحيحة! 🎉';
+                    feedbackDisplay.classList.add('correct-answer-highlight'); // Highlight feedback in green
+                    if (selectedOptionElement) {
+                        selectedOptionElement.classList.add('option-correct-highlight');
+                    }
+                } else {
+                    // If the answer is incorrect
+                    feedbackDisplay.textContent = `إجابة خاطئة. الإجابة الصحيحة هي: ${item.type === 'true_false' ? (item.a ? 'صحيح (√)' : 'خطأ (X)') : item.correct}`;
+                    feedbackDisplay.classList.add('incorrect-answer-highlight');
+                    if (selectedOptionElement) {
+                        selectedOptionElement.classList.add('option-incorrect-highlight');
+                    }
+                    // Highlight the correct answer in green for this question
+                    let correctOptionElement = null;
+                    if (item.type === 'mcq') {
+                        correctOptionElement = Array.from(allOptionsInCard).find(opt => opt.querySelector('input').value === item.correct);
+                    } else if (item.type === 'true_false') {
+                        correctOptionElement = Array.from(allOptionsInCard).find(opt => (opt.querySelector('input').value === 'true' && item.a) || (opt.querySelector('input').value === 'false' && !item.a));
+                    }
+                    if (correctOptionElement) {
+                        correctOptionElement.classList.add('option-correct-highlight');
+                    }
+
+                    // Log this incorrect answer for review
+                    incorrectAnswersLog.push({
+                        sectionId: sectionId,
+                        questionNumber: index + 1,
+                        questionText: item.q,
+                        correctAnswer: item.type === 'true_false' ? (item.a ? 'صحيح (√)' : 'خطأ (X)') : item.correct,
+                        userAnswer: userAnswerText,
+                        options: item.options || ['صحيح', 'خطأ'] // Store options for review
+                    });
+                }
+            });
+
+            const scoreDisplayElement = document.getElementById(section.scoreDisplayId);
+            scoreDisplayElement.textContent = `لقد حصلت على ${score} من ${totalQuestions} إجابات صحيحة.`;
+            scoreDisplayElement.classList.add('correct-answer-highlight');
+
+            finalScoreMessageElement.textContent = `نتيجتك النهائية: ${score} من ${totalQuestions}`;
+            finalScoreMessageElement.classList.remove('hidden');
+
+            if (incorrectAnswersLog.length > 0) {
+                reviewButton.classList.remove('hidden');
+            }
+        }
+
+        // Function to render the "Incorrect Answers" review section
+        function renderIncorrectAnswers() {
+            const container = document.getElementById('incorrect-answers-container');
+            container.innerHTML = ''; // Clear previous content in the review container
+
+            if (incorrectAnswersLog.length === 0) {
+                // If there are no incorrect answers, display a message
+                container.innerHTML = `<p class="text-xl text-gray-600 text-center mt-8">لا توجد إجابات خاطئة لمراجعتها حتى الآن. حاول الإجابة على بعض الأسئلة أولاً!</p>`;
+                return;
+            }
+
+            const optionLabels = ['A', 'B', 'C', 'D', 'E', 'F']; // Labels for MCQ options
+
+            // Group incorrect answers by their original tutorial section
+            const groupedIncorrectAnswers = incorrectAnswersLog.reduce((acc, current) => {
+                if (!acc[current.sectionId]) {
+                    acc[current.sectionId] = [];
+                }
+                acc[current.sectionId].push(current);
+                return acc;
+            }, {});
+
+            // Iterate through each grouped section of incorrect answers
+            for (const sectionId in groupedIncorrectAnswers) {
+                const sectionHeader = document.createElement('h3');
+                sectionHeader.className = 'text-xl font-bold mb-4 mt-8 text-gray-700'; // Styling for the section header
+                
+                // Customize section header text based on the section ID
+                let headerText = '';
+                if (sectionId === 'tutorial2') {
+                    headerText = 'الأخطاء في قسم Tutorial 2: Electronic Circuit Basics';
+                } else if (sectionId === 'tutorial3') {
+                    headerText = 'الأخطاء في قسم Tutorial 3: Data';
+                } else if (sectionId === 'tutorial4') {
+                    headerText = 'الأخطاء في قسم Tutorial 4: Data Types';
+                } else if (sectionId === 'practical') {
+                    headerText = 'الأخطاء في قسم Practical Questions';
+                }
+                else {
+                    // Fallback for any other section IDs
+                    headerText = `الأخطاء في قسم ${sectionId.charAt(0).toUpperCase() + sectionId.slice(1)}`;
+                }
+                sectionHeader.textContent = headerText;
+                container.appendChild(sectionHeader); // Add the section header to the container
+
+                // Iterate through each incorrect answer within the current section
+                groupedIncorrectAnswers[sectionId].forEach(loggedError => {
+                    const questionCard = document.createElement('div');
+                    // Add specific styling for review cards (e.g., red border/background)
+                    questionCard.className = 'card border border-red-300 bg-red-50'; 
+                    questionCard.id = `review-card-${loggedError.sectionId}-${loggedError.questionNumber}`; // Unique ID for review card
+
+                    let optionsHtml = ''; // Initialize HTML for options
+                    // Get the original question data to correctly display options for review
+                    // Ensure to select the correct data array based on sectionId
+                    const currentQuestionData = sections[loggedError.sectionId].data[loggedError.questionNumber - 1]; 
+                    
+                    if (currentQuestionData.type === 'mcq') {
+                        // For MCQ questions, render all options and highlight user's choice and correct answer
+                        currentQuestionData.options.forEach((option, optIndex) => {
+                            const label = optionLabels[optIndex] || '';
+                            const isUserAnswer = (option === loggedError.userAnswer);
+                            const isCorrectAnswer = (option === loggedError.correctAnswer);
+
+                            let optionClass = '';
+                            if (isUserAnswer && !isCorrectAnswer) { 
+                                // If this is the user's incorrect answer, apply red highlight
+                                optionClass = 'option-incorrect-highlight'; 
+                            } else if (isCorrectAnswer) { 
+                                // If this is the correct answer, apply green highlight
+                                optionClass = 'option-correct-highlight'; 
+                            }
+
+                            optionsHtml += `
+                                <div class="mcq-option ${optionClass}">
+                                    <input type="radio" id="review-${loggedError.sectionId}-${loggedError.questionNumber}-opt-${optIndex}" 
+                                            name="review-${loggedError.sectionId}-${loggedError.questionNumber}" value="${option}" 
+                                            disabled ${isUserAnswer ? 'checked' : ''}>
+                                    <label for="review-${loggedError.sectionId}-${loggedError.questionNumber}-opt-${optIndex}">${label}. ${option}</label>
+                                </div>
+                            `;
+                        });
+                    } else if (currentQuestionData.type === 'true_false') {
+                         // For True/False questions, highlight the user's choice and correct answer
+                         const trueOptionClass = (loggedError.userAnswer === 'صحيح' && loggedError.correctAnswer !== 'صحيح (√)') ? 'option-incorrect-highlight' : (loggedError.correctAnswer === 'صحيح (√)' ? 'option-correct-highlight' : '');
+                         const falseOptionClass = (loggedError.userAnswer === 'خطأ' && loggedError.correctAnswer !== 'خطأ (X)') ? 'option-incorrect-highlight' : (loggedError.correctAnswer === 'خطأ (X)' ? 'option-correct-highlight' : '');
+
+                        optionsHtml += `
+                            <div class="mcq-option ${trueOptionClass}">
+                                <input type="radio" id="review-${loggedError.sectionId}-${loggedError.questionNumber}-opt-true" 
+                                        name="review-${loggedError.sectionId}-${loggedError.questionNumber}" value="true" 
+                                        disabled ${loggedError.userAnswer === 'صحيح' ? 'checked' : ''}>
+                                <label for="review-${loggedError.sectionId}-${loggedError.questionNumber}-opt-true">صحيح</label>
+                            </div>
+                            <div class="mcq-option ${falseOptionClass}">
+                                <input type="radio" id="review-${loggedError.sectionId}-${loggedError.questionNumber}-opt-false" 
+                                        name="review-${loggedError.sectionId}-${loggedError.questionNumber}" value="false" 
+                                        disabled ${loggedError.userAnswer === 'خطأ' ? 'checked' : ''}>
+                                <label for="review-${loggedError.sectionId}-${loggedError.questionNumber}-opt-false">خطأ</label>
+                            </div>
+                        `;
+                    }
+
+                    // Populate the question card with question text, options, user's answer, and correct answer
+                    questionCard.innerHTML = `
+                        <p class="question-text">السؤال ${loggedError.questionNumber}: ${loggedError.questionText}</p>
+                        <div class="mb-4">${optionsHtml}</div> <!-- Added optionsHtml here for review page -->
+                        <p class="text-red-700 font-semibold">إجابتك: ${loggedError.userAnswer}</p>
+                        <p class="text-green-700 font-semibold">الإجابة الصحيحة: ${loggedError.correctAnswer}</p>
+                    `;
+                    container.appendChild(questionCard); // Add the review card to the container
+                });
+            }
+        }
+
+        // Event listeners for navigation tabs to switch between different sections
+        document.getElementById('tutorial2-tab').addEventListener('click', () => showSection('tutorial2'));
+        document.getElementById('tutorial3-tab').addEventListener('click', () => showSection('tutorial3'));
+        document.getElementById('tutorial4-tab').addEventListener('click', () => showSection('tutorial4'));
+        document.getElementById('practical-tab').addEventListener('click', () => showSection('practical')); // New practical tab listener
+        document.getElementById('incorrect-answers-tab').addEventListener('click', () => showSection('incorrect-answers'));
+
+        // Event listeners for "Review Errors" buttons within each tutorial section
+        document.getElementById('review-incorrect-button-tutorial2').addEventListener('click', () => showSection('incorrect-answers'));
+        document.getElementById('review-incorrect-button-tutorial3').addEventListener('click', () => showSection('incorrect-answers'));
+        document.getElementById('review-incorrect-button-tutorial4').addEventListener('click', () => showSection('incorrect-answers'));
+        document.getElementById('review-incorrect-button-practical').addEventListener('click', () => showSection('incorrect-answers')); // New practical review button listener
+
+
+        // Initial rendering of the default section when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            showSection('tutorial2'); // Show the first tutorial section by default
+        });
+
+        // The dark mode toggle button and its functionality have been removed as per your request.
+        // If you wish to re-add it, please provide the button HTML and JavaScript logic again.
+    </script>
+</body>
+</html>

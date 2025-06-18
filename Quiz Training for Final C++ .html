@@ -1,0 +1,1830 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced C++ Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 0;
+            position: relative;
+        }
+
+        .navbar {
+            width: 100%;
+            background-color: #1a73e8;
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 500;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .quiz-container {
+            max-width: 800px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            padding: 30px 40px;
+            animation: fadeIn 0.8s ease-out;
+            margin-top: 20px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            color: #1a73e8;
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: 700;
+            font-size: 2.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .quiz-intro {
+            text-align: center;
+            margin-bottom: 35px;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .code-block {
+            background-color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+            font-size: 0.95rem;
+            color: #2d3748;
+            overflow-x: auto;
+            margin-bottom: 15px;
+            white-space: pre-wrap;
+        }
+
+        .question-text {
+            font-weight: 600;
+            margin-bottom: 18px;
+            color: #333;
+            font-size: 1.15rem;
+        }
+
+        .options-container {
+            margin-left: 0;
+        }
+
+        .option {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            border-radius: 8px;
+            background-color: #f7f9fc;
+            border: 1px solid #e0e0e0;
+            transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option:hover {
+            background-color: #ebf5ff;
+            border-color: #a0cffc;
+            box-shadow: 0 0 15px rgba(26, 115, 232, 0.6), 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .option::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 70%);
+            transform: rotate(0deg);
+            transition: transform 0.5s linear;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        .option:hover::before {
+            opacity: 1;
+            transform: rotate(360deg);
+        }
+
+        .option input[type="radio"] {
+            margin-right: 12px;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            accent-color: #1a73e8;
+        }
+
+        .option label {
+            cursor: pointer;
+            font-size: 1rem;
+            color: #444;
+            flex-grow: 1;
+        }
+
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            margin-top: 40px;
+        }
+
+        .submit-btn:hover {
+            background-color: #155cb7;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .results-container {
+            display: none;
+            margin-top: 40px;
+            padding: 30px;
+            border-radius: 12px;
+            background-color: #e8f0fe;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .score-display {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .score-display h2 {
+            font-size: 2rem;
+            color: #1a73e8;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .score-display p {
+            font-size: 1.2rem;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        .correct-score {
+            color: #28a745;
+            font-weight: bold;
+            font-size: 2.2rem;
+            transition: color 0.3s ease;
+        }
+
+        .incorrect-score {
+            color: #dc3545;
+            font-weight: bold;
+            font-size: 2.2rem;
+            transition: color 0.3s ease;
+        }
+
+        .incorrect-questions {
+            margin-top: 30px;
+            border-top: 1px solid #d0d0d0;
+            padding-top: 25px;
+        }
+
+        .incorrect-questions h3 {
+            font-size: 1.5rem;
+            color: #dc3545;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .incorrect-question {
+            background-color: #ffebee;
+            padding: 18px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 5px solid #dc3545;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .incorrect-question p {
+            margin-bottom: 5px;
+            font-size: 1rem;
+        }
+
+        .incorrect-question strong {
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .correct-answer {
+            color: #28a745;
+            font-weight: 500;
+            margin-top: 8px;
+            font-size: 0.95rem;
+        }
+
+        .selected-answer {
+            color: #dc3545;
+            font-weight: 500;
+            margin-top: 5px;
+            font-size: 0.95rem;
+        }
+
+        #timedMessageBox {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #fff3e0;
+            border: 1px solid #ffcc80;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #e65100;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: none;
+            z-index: 1000;
+            animation: slideInUp 0.5s ease-out;
+            text-align: center;
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translateX(-50%) translateY(50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Modal specific styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-card {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+            transform: translateY(-20px);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .modal-overlay.show .modal-card {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .modal-card h2 {
+            color: #1a73e8;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .modal-card p {
+            color: #444;
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+        }
+
+        .modal-card h1 {
+            color: #333;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+
+        .modal-card button {
+            background-color: #1a73e8;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border: none;
+        }
+
+        .modal-card button:hover {
+            background-color: #155cb7;
+        }
+
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .quiz-container {
+                padding: 20px 25px;
+            }
+
+            .question-card {
+                padding: 20px;
+            }
+
+            .question-text {
+                font-size: 1.05rem;
+            }
+
+            .option label {
+                font-size: 0.95rem;
+            }
+
+            .submit-btn {
+                font-size: 1rem;
+                padding: 12px;
+            }
+
+            .score-display h2 {
+                font-size: 1.8rem;
+            }
+
+            .correct-score,
+            .incorrect-score {
+                font-size: 2rem;
+            }
+
+            .incorrect-questions h3 {
+                font-size: 1.3rem;
+            }
+
+            .navbar {
+                padding: 10px 15px;
+                font-size: 1rem;
+            }
+
+            #timedMessageBox {
+                width: 90%;
+                font-size: 1rem;
+                padding: 8px 15px;
+            }
+
+            .modal-card h2 {
+                font-size: 1.5rem;
+            }
+
+            .modal-card p {
+                font-size: 1rem;
+            }
+
+            .modal-card button {
+                padding: 8px 20px;
+                font-size: 0.95rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .quiz-container {
+                padding: 15px 20px;
+            }
+
+            .question-card {
+                padding: 15px;
+                margin-bottom: 20px;
+            }
+
+            .question-text {
+                font-size: 1rem;
+            }
+
+            .option {
+                padding: 8px 12px;
+            }
+
+            .option label {
+                font-size: 0.9rem;
+            }
+
+            .submit-btn {
+                font-size: 0.95rem;
+                padding: 10px;
+            }
+
+            .results-container {
+                padding: 20px;
+            }
+
+            .navbar {
+                padding: 8px 10px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        ❤ صل علي النبي
+    </nav>
+
+    <div class="quiz-container">
+        <h1>Advanced C++ Review</h1>
+        <p class="quiz-intro">Test your knowledge of Advanced C++ concepts, including code output questions.</p>
+
+        <form id="quizForm">
+
+        </form>
+
+        <button type="button" id="submitBtn" class="submit-btn">Submit Quiz</button>
+
+        <div id="results" class="results-container">
+            <div class="score-display">
+                <h2>Your Results</h2>
+                <p>Correct answers: <span id="correctCount" class="correct-score">0</span></p>
+                <p>Incorrect answers: <span id="incorrectCount" class="incorrect-score">0</span></p>
+            </div>
+            <div id="incorrectQuestions" class="incorrect-questions">
+                <h3>Questions to Review:</h3>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="timedMessageBox">❤صل علي النبي</div>
+
+    <div id="welcomeModal" class="modal-overlay">
+        <div class="modal-card">
+            <h2>❤يا هلا و مرحبا </h2>
+            <h1>❤ متنسوش تصلوا على النبي وتدعوا في ظهر الغيب</h1> <br>
+            <p>ضروري لو في سؤال تبع الاكواد افتح المسله من الشيت و ابدء شوف الحل</p>
+            <p>و متنساش تفتح الشيت و تحل الاكواد لوحدك</p>
+            <button id="modalOkBtn">OK</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                question: "Q1. The array name can be incremented.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q2. Incorrect pointers are initialized pointers.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q3. Incorrect pointers point to valid addresses.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q4. You can define arrays to hold many pointers.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q5. It is impossible to return a pointer from a function.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q6. Pointers and arrays are completely interchangeable.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q7. Pointers and arrays are interchangeable in many cases.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q8. Pointers reduce the code and improve the performance.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q9. A pointer that is assigned NULL is called an invalid pointer.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q10. We can return multiple values from a function using a pointer.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q11. It is not allowed to pass a pointer to a function as a parameter.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q12. The function pointer can be passed as a parameter to another function.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q13. A pointer to a pointer is a form of multiple indirections or a chain of pointers.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q14. We can assign the void pointer to any other pointer type without any typecasting.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q15. It is a good idea to return the address of a local variable to outside of the function.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q16. Null Pointers is a constant with a value of zero defined in several standard libraries.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q17. The function pointer is a pointer used to point to local variables within the function.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q18. A void pointer is a general-purpose pointer that can hold the address of any data type.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q19. A pointer must point to a valid address, not necessarily to useful items (like for arrays).",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q20. In C++, we need to typecast when we assign the void pointer type to any other pointer type.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q21. You can perform arithmetic operations (++, --, +, and -) on a pointer just as you can a numeric value.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q22. We should assign the pointer variable with NULL if we do not have the exact address to be assigned.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+
+            {
+                question: "Q1. An array is an example of static memory allocation.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q2. malloc() function initially initializes all bytes to zero.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q3. The delete operator is faster than the free() function.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q4. In static memory allocation, memory is allocated at run time.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q5. calloc() function allocates a single block of requested memory.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q6. Using a linked list is an example of dynamic memory allocation.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q7. malloc() function allocates multiple blocks of requested memory.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q8. After calling free(), it is a good practice to set the pointer to NULL.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q9. Memory is allocated at compile time in dynamic memory allocation.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q10. We can free the dynamically allocated memory using free() function.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q11. The delete operator used to de-allocates the memory from the heap.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q12. malloc() and calloc() functions return NULL if memory is not sufficient.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q13. free() function is used to reallocate the dynamically allocated memory.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q14. 'Dangling pointer' points to a memory location that has been deallocated.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q15. Like other operators, the new and delete operators can also be overloaded.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q16. Pointers make you able to access any memory location in the computer's memory.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q17. We can use the new operator to allocate the memory dynamically at the run time.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q18. Memory can't be increased while executing a program in static memory allocation.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q19. realloc() function reallocates the memory occupied by malloc() or calloc() functions.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q20. In dynamic memory allocation, memory can't be increased while executing a program.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q21. calloc() function doesn't initialize memory at execution time, so it has garbage value initially.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q22. We can dynamically allocate memory using malloc() and calloc() functions where a pointer is used.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q23. The memory occupied by malloc() or calloc() functions must be released by calling free() function.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q24. C++ defines unary operators such as new and delete to perform allocating and freeing the memory.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q25. If memory is not sufficient for malloc() or calloc(), it can reallocate the memory by realloc() function.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q26. 'new' operator does not use the sizeof() operator as it automatically computes the size of the data object.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q27. The free() function can be used to delete the pointer, which is either allocated using new operator or a NULL pointer.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q28. 'new' operator automatically returns the correct data type pointer, so it does not need to use the typecasting.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q29. 'delete' operator can be used to delete the pointer that is either allocated using malloc(), calloc(), or realloc() function or NULL pointer.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q30. The main advantage of new over malloc() is that new doesn't just allocate memory, it constructs objects which is the prime purpose of C++.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q31. Memory management is a process of managing computer memory, and assigning the memory space to the programs to improve the overall system performance.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+
+            {
+                question: "Q1. The C++ standard library provides a proper date type.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q2. The inline function yields less code than a normal function.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q3. An inline function is mainly beneficial for embedded systems.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q4. We can provide the inlining to the functions If a function is recursive.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q5. The <ctime> library has a variety of functions to measure dates and times.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q6. The structure type tm holds the date and time in the form of a C structure.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q7. C++ inherits the structs and functions for date and time manipulation from C.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q8. The inline function saves the overhead of the return statement from a function.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q9. If a function contains static variables, we can provide the inlining to the functions.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q10. In the inline function, we do not need to call a function, so it does not cause any overhead.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q11. We cannot provide the inlining to the functions If a function contains a switch or go to statement.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q12. If a function contains a loop statement like 'while', we cannot provide the inlining to the functions.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q13. In C++, when we can declare an inline function, this copies the function to the location of the function call in compile-time and may make the program execution faster.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q14. There are two different data types used to store the date and time: time_t for timestamps and struct tm for datetime structures.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+
+            {
+                question: "Q1. OOP is faster and easier to execute.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q2. Object is the basic unit of object-oriented programming.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q3. OOP does not provide a clear structure for the programs.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q4. Inheritance feature does not help to reduce the code size.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q5. When you define an object, you define a blueprint for a class.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q6. A class is a built-in-defined data type that we can use in our program.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q7. A class works as an object constructor or a 'blueprint' for creating objects.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q8. Data and functions that operate on data are bundled as a unit called an object.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q9. Polymorphism means the ability to use an operator or function in different ways.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q10. Attributes and methods are basically variables and functions that belong to the class.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q11. Procedural programming is about creating objects that contain both data and functions.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q12. Encapsulation is placing the data and the functions that work on that data in the same place.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q13. OOP programming is about writing procedures or functions that perform operations on the data.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q14. OOP makes it possible to create fully reusable applications with less code and shorter development time.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q15. Abstraction means providing only essential information to the outside world and hiding their background details.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q16. OOP helps to keep the C++ code DRY 'Don't Repeat Yourself', and makes the code easier to maintain, modify and debug.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q17. Inheritance is the process of forming a new class from an existing class, this existing class is called a base class while the new class is called a derived class.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q18. Encapsulation decreased the security of data.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q19. Non-static member is shared by all objects of the class.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q20. Static members cannot be used for Tracking Method calls.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q21. A static member function can access non-static data members.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q22. Protected - members cannot be accessed from outside the class.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q23. The 'this pointer' is an implicit parameter for all member functions.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q24. Static members can be used to store global configuration settings or constants.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q25. Friend functions have a this pointer because friends are not members of a class.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q26. By default, all members of a class are public if you don't specify an access specifier.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q27. There is one way to define class members that belong to a class; inside the class only.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q28. Destructor can be very useful for releasing resources before coming out of the program.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q29. The meaning of Encapsulation is to make sure that 'sensitive' data is hidden from users.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q30. It is possible to access private members of a class using a public method inside the same class.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q31. Every object in C++ has access to its own address through an important pointer called this pointer.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q32. A constructor has the same name as the class, it is always public, and it can have any return value.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q33. A constructor is a special method that is automatically called when an object of a class is destroyed.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q34. All static data is initialized to zero when the first object is created, if no other initialization is present.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q35. A destructor will have the same name as the class prefixed with a tilde (~) and it may have parameters.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q36. You could use a static member function to determine whether some objects of the class have been created or not.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q37. A destructor is a special member function of a class that is executed whenever an object of its class goes out of scope.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q38. Static members are often used to manage shared resources or counters that should be shared across all instances of a class.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q39. A singleton pattern is a design pattern that makes sure that a class has only one instance and provides a global point of access to it.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q40. Only member functions have this pointer.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q41. This pointer is accessible in static functions.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q42. this pointer cannot be used for method chaining.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Q43. this pointer can be used in passing the current objects.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q44. The fundamental properties of this pointer cannot be cannot change.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q45. To access members of a pointer to a class you use the member access operator -> operator.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q46. 'this' resolves name conflicts that occur between local variables and data member names.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q47. A member function can use this keyword to access the pointer, which points to the calling object.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q48. Method Chaining is possible through this pointer because it provides a reference to the calling object.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q49. Operator overloading functionality depends on this pointer, which returns the object reference from the calling location.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "Q50. 'this' pointer is an implicit address that exists for each class member function during their execution time to access the current object.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+
+            {
+                question: "What is the output of the following C++ code?\n\n```cpp\n#include <iostream>\nusing namespace std;\n\nclass Vehicle {\npublic:\n    string brand = \"Hundai\";\n    void honk() {\n        cout << \"Tuut, tuut!\\n\";\n    }\n};\n\nclass Car: public Vehicle {\npublic:\n    string model = \"Optra\";\n};\n\nint main() {\n    Car myCar;\n    myCar.honk();\n    cout << myCar.brand + \" \" + myCar.model;\n    return 0;\n}\n```",
+                options: ["Tuut, tuut!\nHundai Optra", "Hundai Optra\nTuut, tuut!", "Error", "None of the above"],
+                correctIndex: 0,
+                correctAnswer: "Tuut, tuut!\nHundai Optra"
+            },
+            {
+                question: "What is the output of the following C++ code?\n\n```cpp\n#include <iostream>\nusing namespace std;\n\nvoid Add(int num1, int num2) {\n    int sum = num1 + num2;\n    cout << \"The Result is \" << sum << endl;\n}\n\nvoid Add(int num1, int num2, int num3) {\n    int sum = num1 + num2 + num3;\n    cout << \"The Result is \" << sum << endl;\n}\n\nvoid Add(double num1, double num2) {\n    double sum = num1 + num2;\n    cout << \"The Result is \" << sum << endl;\n}\n\nint main() {\n    Add(5, 10);\n    Add(5, 10, 15);\n    Add(5.5, 10.7);\n    return 0;\n}\n```",
+                options: ["The Result is 15\nThe Result is 30\nThe Result is 16.2", "Error: Function overloading ambiguity", "The Result is 15\nThe Result is 30\nThe Result is 16", "None of the above"],
+                correctIndex: 0,
+                correctAnswer: "The Result is 15\nThe Result is 30\nThe Result is 16.2"
+            },
+            {
+                question: "What is the output of the following C++ code?\n\n```cpp\n#include <iostream>\nusing namespace std;\n\nclass DemoDC {\nprivate:\n    int num1, num2;\npublic:\n    DemoDC() {\n        num1 = 10;\n        num2 = 20;\n    }\n    void display() {\n        cout << \"num1 = \" << num1 << endl;\n        cout << \"num2 = \" << num2 << endl;\n    }\n};\n\nint main() {\n    DemoDC obj;\n    obj.display();\n    return 0;\n}\n```",
+                options: ["num1 = 10\nnum2 = 20", "num1 = 0\nnum2 = 0", "Error", "None of the above"],
+                correctIndex: 0,
+                correctAnswer: "num1 = 10\nnum2 = 20"
+            },
+            {
+                question: "What is the output of the following C++ code segment related to shallow copy?\n\n```cpp\n#include <iostream>\nusing namespace std;\n\nclass MyClass {\nprivate:\n    int* data;\npublic:\n    MyClass(int value) {\n        data = new int(value);\n    }\n    MyClass (const MyClass& other) {\n        data = other.data;\n    }\n    ~MyClass() {\n        delete data;\n    }\n    void showData() const { cout << \"Data: \" << *data << endl; }\n};\n\nint main() {\n    MyClass obj1(42);\n    MyClass obj2 = obj1;\n    obj1.showData();\n    obj2.showData();\n    return 0;\n}\n```",
+                options: ["Data: 42\nData: 42\nFollowed by a runtime error (double free detected)", "Data: 42\nData: 42", "Error: Cannot assign pointers like that", "None of the above"],
+                correctIndex: 0,
+                correctAnswer: "Data: 42\nData: 42\nFollowed by a runtime error (double free detected)"
+            },
+            {
+                question: "What is the output of the following C++ code segment demonstrating deep copy?\n\n```cpp\n#include <iostream>\nusing namespace std;\n\nclass MyClass {\nprivate:\n    int* data;\npublic:\n    MyClass(int value) { data = new int(value); }\n    MyClass (const MyClass& other) {\n        data = new int(*other.data); \n    }\n    ~MyClass() { delete data; }\n    void showData() const { cout << \"Data: \" << *data << endl; }\n};\n\nint main() {\n    MyClass obj1(42);\n    MyClass obj2 = obj1;\n    obj1.showData();\n    obj2.showData();\n    return 0;\n}\n```",
+                options: ["Data: 42\nData: 42", "Data: 42\nData: [garbage value]", "Error: Double allocation", "None of the above"],
+                correctIndex: 0,
+                correctAnswer: "Data: 42\nData: 42"
+            },
+            {
+                question: "What is the output of the following C++ code?\n\n```cpp\n#include <iostream>\nusing namespace std;\n\nclass Base {\npublic:\n    Base() { cout << \"\\n Constructor Base class\"; }\n    ~Base() { cout << \"\\n Destructor Base class\"; }\n};\n\nclass Derived: public Base {\npublic:\n    Derived() { cout << \"\\n Constructor Derived class\"; }\n    ~Derived() { cout << \"\\n Destructor Derived class\"; }\n};\n\nint main() {\n    Base *bptr = new Derived;\n    delete bptr;\n    return 0;\n}\n```",
+                options: ["Constructor Base class\n Constructor Derived class\n Destructor Base class\n Destructor Derived class ??", "Constructor Base class\n Constructor Derived class\n Destructor Derived class\n Destructor Base class", "Constructor Base class\n Destructor Base class", "Error"],
+                correctIndex: 0,
+                correctAnswer: "Constructor Base class\n Constructor Derived class\n Destructor Base class\n Destructor Derived class ??"
+            },
+            {
+                question: "What is the output of the following C++ code when `virtual` destructor is used?\n\n```cpp\n#include <iostream>\nusing namespace std;\n\nclass Base {\npublic:\n    Base() { cout << \"\\n Constructor Base class\"; }\n    virtual ~Base() { cout << \"\\n Destructor Base class\"; }\n};\n\nclass Derived: public Base {\npublic:\n    Derived() { cout << \"\\n Constructor Derived class\"; }\n    ~Derived() { cout << \"\\n Destructor Derived class\"; }\n};\n\nint main() {\n    Base *bptr = new Derived;\n    delete bptr;\n    return 0;\n}\n```",
+                options: ["Constructor Base class\n Constructor Derived class\n Destructor Derived class\n Destructor Base class", "Constructor Base class\n Constructor Derived class\n Destructor Base class\n Destructor Derived class ??", "Constructor Base class\n Destructor Base class", "Error"],
+                correctIndex: 0,
+                correctAnswer: "Constructor Base class\n Constructor Derived class\n Destructor Derived class\n Destructor Base class"
+            },
+            {
+                question: "What is the output of the following C++ code regarding polymorphism and function hiding?\n\n```cpp\n#include <iostream>\nusing namespace std;\n\nclass Animal {\npublic:\n    void speak() { cout << \"Animal speaks\" << endl; }\n};\n\nclass Dog: public Animal {\npublic:\n    void speak() { cout << \"Dog barks\" << endl; }\n};\n\nint main() {\n    Animal a;\n    Dog d;\n    a.speak();\n    d.speak();\n    return 0;\n}\n```",
+                options: ["Animal speaks\nDog barks", "Dog barks\nAnimal speaks", "Animal speaks\nAnimal speaks", "Dog barks\nDog barks"],
+                correctIndex: 0,
+                correctAnswer: "Animal speaks\nDog barks"
+            },
+            {
+                question: "What is the output of the following C++ code segment demonstrating virtual functions?\n\n```cpp\n#include <iostream>\nusing namespace std;\n\nclass Animal {\npublic:\n    virtual void sound() { cout << \"Some animal sound\\n\"; }\n};\n\nclass Dog: public Animal {\npublic:\n    void sound() override { cout << \"Bark\\n\"; }\n};\n\nint main() {\n    Animal* a;\n    Dog d;\n    a = &d;\n    a->sound();\n    return 0;\n}\n```",
+                options: ["Bark", "Some animal sound", "Error", "None of the above"],
+                correctIndex: 0,
+                correctAnswer: "Bark"
+            },
+            {
+                question: "What is the output of the following C++ code using scope resolution operator?\n\n```cpp\n#include <iostream>\nusing namespace std;\n\nclass base_Class {\npublic:\n    void print() { cout << \"This is the Base Function.\" << endl; }\n};\n\nclass derived_Class : public base_Class {\npublic:\n    void print() { cout << \"This is the Derived Function.\" << endl; }\n};\n\nint main() {\n    derived_Class a1, a2;\n    a1.print();\n    a2.base_Class::print();\n    return 0;\n}\n```",
+                options: ["This is the Derived Function.\nThis is the Base Function.", "This is the Base Function.\nThis is the Derived Function.", "This is the Derived Function.\nThis is the Derived Function.", "This is the Base Function.\nThis is the Base Function."],
+                correctIndex: 0,
+                correctAnswer: "This is the Derived Function.\nThis is the Base Function."
+            },
+            {
+                question: "What is the output of the following C++ code for multiple inheritance ambiguity?\n\n```cpp\n#include <iostream>\nusing namespace std;\n\nclass A {\npublic:\n    void displayA() { cout << \"Class A\" << endl; }\n};\n\nclass B: public A {};\n\nclass C: public A {};\n\nclass D: public B, public C {};\n\nint main() {\n    D obj;\n    obj.displayA();\n    return 0;\n}\n```",
+                options: ["Error: request for member 'displayA' is ambiguous", "Class A", "Class B", "Class C"],
+                correctIndex: 0,
+                correctAnswer: "Error: request for member 'displayA' is ambiguous"
+            },
+            {
+                question: "What is the output of the following C++ code with virtual inheritance?\n\n```cpp\n#include <iostream>\nusing namespace std;\n\nclass A {\npublic:\n    void show() { cout << \"Class A (virtual)\" << endl; }\n};\n\nclass B: virtual public A {};\n\nclass C: virtual public A {};\n\nclass D : public B, public C {};\n\nint main() {\n    D obj;\n    obj.show();\n    return 0;\n}\n```",
+                options: ["Class A (virtual)", "Error: Ambiguity", "None of the above", "Class B or Class C (unpredictable)"],
+                correctIndex: 0,
+                correctAnswer: "Class A (virtual)"
+            },
+            {
+                question: "What is the output of the following C++ code involving `std::move` and `Tpoint` class (raw pointer management)?\n\n```cpp\n#include <iostream>\n#include <cstring>\nusing namespace std;\n\nclass Tpoint {\npublic:\n    char* str;\n    Tpoint(const char* s) {\n        str = new char[strlen(s) + 1];\n        strcpy(str, s);\n        cout << \"Constructor called\\n\";\n    }\n    Tpoint(Tpoint&& other) {\n        str = other.str;\n        other.str = nullptr;\n        cout << \"Move Constructor called\\n\";\n    }\n    ~Tpoint() {\n        delete[] str;\n    }\n    void show() {\n        if (str)\n            cout << str << endl;\n        else\n            cout << \"Null string\" << endl;\n    }\n};\n\nint main() {\n    Tpoint T1(\"Hello Tpoint Tech\");\n    Tpoint T2 = move(T1);\n    T2.show();\n    T1.show();\n    return 0;\n}\n```",
+                options: ["Constructor called\nMove Constructor called\nHello Tpoint Tech\nNull string", "Constructor called\nHello Tpoint Tech\nHello Tpoint Tech", "Error", "Constructor called\nMove Constructor called\nNull string\nHello Tpoint Tech"],
+                correctIndex: 0,
+                correctAnswer: "Constructor called\nMove Constructor called\nHello Tpoint Tech\nNull string"
+            },
+            {
+                question: "What is the output of the following C++ code involving `std::move` and `std::string`?\n\n```cpp\n#include <iostream>\n#include <string>\n#include <utility> // For std::move\nusing namespace std;\n\nclass Tpoint {\npublic:\n    string str;\n    Tpoint(const string& s): str(s) { cout << \"Constructor called\\n\"; }\n    Tpoint(Tpoint&& other) : str(std::move(other.str)) { cout << \"Move Constructor called\\n\"; }\n    void show() const {\n        if (!str.empty())\n            cout << str << endl;\n        else\n            cout << \"Null string\\n\";\n    }\n};\n\nint main() {\n    Tpoint T1(\"Hello Tpoint Tech\");\n    Tpoint T2 = std::move(T1);\n    T2.show();\n    T1.show();\n    return 0;\n}\n```",
+                options: ["Constructor called\nMove Constructor called\nHello Tpoint Tech\nNull string", "Constructor called\nMove Constructor called\nHello Tpoint Tech\nHello Tpoint Tech", "Error", "None of the above"],
+                correctIndex: 0,
+                correctAnswer: "Constructor called\nMove Constructor called\nHello Tpoint Tech\nNull string"
+            },
+
+            {
+                question: "Polymorphism literally means:",
+                options: ["Many forms", "Single form", "No form", "Static form"],
+                correctIndex: 0,
+                correctAnswer: "Many forms"
+            },
+            {
+                question: "What are the two main categories of Polymorphism in C++?",
+                options: ["Compile-time and Run-time", "Static and Dynamic", "Early binding and Late binding", "All of the above"],
+                correctIndex: 3,
+                correctAnswer: "All of the above"
+            },
+            {
+                question: "Compile-time polymorphism is achieved using:",
+                options: ["Function Overloading", "Operator Overloading", "Virtual Functions", "Both A and B"],
+                correctIndex: 3,
+                correctAnswer: "Both A and B"
+            },
+            {
+                question: "Run-time polymorphism is achieved using:",
+                options: ["Function Overloading", "Operator Overloading", "Virtual Functions", "Friend Functions"],
+                correctIndex: 2,
+                correctAnswer: "Virtual Functions"
+            },
+            {
+                question: "Which of the following statements about `friend` functions is true?",
+                options: ["They are members of the class they are friends with.", "They cannot access private and protected members of a class.", "They are defined outside the class but declared inside it.", "They use the 'this' pointer."],
+                correctIndex: 2,
+                correctAnswer: "They are defined outside the class but declared inside it."
+            },
+            {
+                question: "What is the primary purpose of a copy constructor?",
+                options: ["To initialize an object with default values.", "To create a new object as a copy of an existing object.", "To destroy an object when it goes out of scope.", "To convert one type of object to another."],
+                correctIndex: 1,
+                correctAnswer: "To create a new object as a copy of an existing object."
+            },
+            {
+                question: "What is the main difference between shallow copy and deep copy in C++?",
+                options: ["Shallow copy creates independent resources, deep copy shares them.", "Shallow copy shares resources, deep copy creates independent ones.", "Shallow copy is used for primitive types, deep copy for complex types.", "There is no significant difference."],
+                correctIndex: 1,
+                correctAnswer: "Shallow copy shares resources, deep copy creates independent ones."
+            },
+            {
+                question: "When is a destructor automatically invoked?",
+                options: ["When an object is created.", "When an object goes out of scope or is explicitly deleted.", "When a function returns a value.", "When a class is defined."],
+                correctIndex: 1,
+                correctAnswer: "When an object goes out of scope or is explicitly deleted."
+            },
+            {
+                question: "What is the benefit of using a `virtual` destructor in a base class?",
+                options: ["It makes the destructor run faster.", "It prevents memory leaks when deleting derived class objects via a base class pointer.", "It allows the base class destructor to be overloaded.", "It hides the derived class destructor."],
+                correctIndex: 1,
+                correctAnswer: "It prevents memory leaks when deleting derived class objects via a base class pointer."
+            },
+            {
+                question: "What is Data Abstraction in C++?",
+                options: ["Showing all internal details of a class to the user.", "Providing only essential details and hiding internal implementation.", "Converting data from one type to another.", "Managing memory allocation and deallocation."],
+                correctIndex: 1,
+                correctAnswer: "Providing only essential details and hiding internal implementation."
+            },
+            {
+                question: "A class that contains at least one pure virtual function is known as:",
+                options: ["Concrete class", "Abstract base class", "Friend class", "Derived class"],
+                correctIndex: 1,
+                correctAnswer: "Abstract base class"
+            },
+            {
+                question: "In C++, interfaces are typically implemented using:",
+                options: ["Regular classes with all public methods.", "Structs with no member functions.", "Abstract classes with only pure virtual functions and no data members.", "Enums."],
+                correctIndex: 2,
+                correctAnswer: "Abstract classes with only pure virtual functions and no data members."
+            },
+            {
+                question: "What is the 'Diamond Problem' in inheritance?",
+                options: ["A problem with single inheritance.", "Ambiguity caused when a class inherits from two classes that both inherit from a common base class.", "A problem with friend functions.", "A type of memory leak."],
+                correctIndex: 1,
+                correctAnswer: "Ambiguity caused when a class inherits from two classes that both inherit from a common base class."
+            },
+            {
+                question: "Which keyword is used to resolve the Diamond Problem in C++?",
+                options: ["friend", "override", "virtual", "static"],
+                correctIndex: 2,
+                correctAnswer: "virtual"
+            },
+            {
+                question: "Delegating constructors allow:",
+                options: ["A constructor to call a member function.", "A constructor to call another constructor within the same class.", "A constructor to call a base class constructor only.", "None of the above."],
+                correctIndex: 1,
+                correctAnswer: "A constructor to call another constructor within the same class."
+            },
+            {
+                question: "The primary advantage of a move constructor is:",
+                options: ["It performs a deep copy for all resources.", "It avoids copying by transferring resource ownership, improving performance.", "It is used only for primitive data types.", "It allows multiple objects to point to the same memory."],
+                correctIndex: 1,
+                correctAnswer: "It avoids copying by transferring resource ownership, improving performance."
+            },
+            {
+                question: "Which access specifier allows members to be accessed from outside the class, within the same class, and in derived classes?",
+                options: ["private", "protected", "public", "internal"],
+                correctIndex: 2,
+                correctAnswer: "public"
+            },
+            {
+                question: "Which access specifier prevents members from being accessed from outside the class and in derived classes, allowing access only within the same class?",
+                options: ["private", "protected", "public", "global"],
+                correctIndex: 0,
+                correctAnswer: "private"
+            },
+            {
+                question: "What is the role of `override` keyword when defining a function in a derived class?",
+                options: ["It makes the function static.", "It ensures the function is meant to override a virtual function from the base class.", "It prevents the function from being called.", "It changes the function's access specifier."],
+                correctIndex: 1,
+                correctAnswer: "It ensures the function is meant to override a virtual function from the base class."
+            },
+            {
+                question: "What is the default behavior of a constructor if no constructor is explicitly defined?",
+                options: ["It calls the base class constructor only.", "The compiler provides a default constructor that performs default initialization.", "It results in a compile-time error.", "It creates a null object."],
+                correctIndex: 1,
+                correctAnswer: "The compiler provides a default constructor that performs default initialization."
+            },
+            {
+                question: "Which constructor type allows providing default values for one or more parameters?",
+                options: ["Default constructor", "Copy constructor", "Parameterized constructor with default arguments", "Move constructor"],
+                correctIndex: 2,
+                correctAnswer: "Parameterized constructor with default arguments"
+            },
+            {
+                question: "When is an implicit copy constructor called?",
+                options: ["When an object is created using `new`.", "When an object is passed by value to a function.", "When an object is returned by reference from a function.", "When an object is destroyed."],
+                correctIndex: 1,
+                correctAnswer: "When an object is passed by value to a function."
+            },
+            {
+                question: "True or False: All static data is initialized to zero when the first object of a class is created, if no other initialization is present.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "True or False: Friendship is inherited.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "True or False: Friend functions can do run-time polymorphism in their members.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "Which type of inheritance involves a class inheriting from another class, which is itself derived from a third class?",
+                options: ["Single Inheritance", "Multiple Inheritance", "Multilevel Inheritance", "Hierarchical Inheritance"],
+                correctIndex: 2,
+                correctAnswer: "Multilevel Inheritance"
+            },
+            {
+                question: "What is the purpose of pure virtual functions in an abstract class?",
+                options: ["To provide a default implementation that can be overridden.", "To force derived classes to implement that function.", "To make the function static.", "To make the function private."],
+                correctIndex: 1,
+                correctAnswer: "To force derived classes to implement that function."
+            },
+            {
+                question: "Data abstraction is primarily about:",
+                options: ["Showing all details to the user.", "Hiding implementation details and showing only essential information.", "Storing data in a database.", "Encrypting data for security."],
+                correctIndex: 1,
+                correctAnswer: "Hiding implementation details and showing only essential information."
+            },
+            {
+                question: "Which of the following is NOT an advantage of Data Abstraction?",
+                options: ["Code reusability", "Reduced complexity for the user", "Protection of implementation details", "Increased tight coupling between modules"],
+                correctIndex: 3,
+                correctAnswer: "Increased tight coupling between modules"
+            },
+            {
+                question: "What is the output of the following C++ code?\n\n```cpp\n#include <iostream>\nusing namespace std;\n\nclass MyClass {\npublic:\n    int a, b;\n    MyClass(): a(0), b(0) { cout << \"Default constructor called\\n\"; }\n    MyClass(int x): a(x), b(0) { cout << \"Overloaded constructor (1 argument) called\\n\"; }\n    MyClass(int x, int y): a(x), b(y) { cout << \"Overloaded constructor (2 arguments) called\\n\"; }\n    void display() { cout << \"a: \" << a << \", b: \" << b << endl; }\n};\n\nint main() {\n    MyClass obj1;\n    MyClass obj2(10);\n    MyClass obj3(10, 20);\n    obj1.display();\n    obj2.display();\n    obj3.display();\n    return 0;\n}\n```",
+                options: ["Default constructor called\nOverloaded constructor (1 argument) called\nOverloaded constructor (2 arguments) called\na: 0, b: 0\na: 10, b: 0\na: 10, b: 20", "Error: Ambiguity in constructor calls", "Default constructor called\na: 0, b: 0\nOverloaded constructor (1 argument) called\na: 10, b: 0\nOverloaded constructor (2 arguments) called\na: 10, b: 20", "None of the above"],
+                correctIndex: 0,
+                correctAnswer: "Default constructor called\nOverloaded constructor (1 argument) called\nOverloaded constructor (2 arguments) called\na: 0, b: 0\na: 10, b: 0\na: 10, b: 20"
+            },
+            {
+                question: "What is the output of the following C++ code?\n\n```cpp\n#include <iostream>\nusing namespace std;\n\nclass Box {\nprivate:\n    int length, width, height;\npublic:\n    Box(int l = 1, int w = 1, int h = 1) {\n        length = l; width = w; height = h;\n    }\n    void displayVolume() {\n        cout << \"Volume: \" << length * width * height << endl;\n    }\n};\n\nint main() {\n    Box b1;\n    Box b2(5);\n    Box b3(5, 4);\n    Box b4(5, 4, 3);\n    b1.displayVolume();\n    b2.displayVolume();\n    b3.displayVolume();\n    b4.displayVolume();\n    return 0;\n}\n```",
+                options: ["Volume: 1\nVolume: 5\nVolume: 20\nVolume: 60", "Volume: 0\nVolume: 5\nVolume: 20\nVolume: 60", "Error: Missing arguments", "None of the above"],
+                correctIndex: 0,
+                correctAnswer: "Volume: 1\nVolume: 5\nVolume: 20\nVolume: 60"
+            },
+            {
+                question: "What is the output of the following C++ code?\n\n```cpp\n#include <iostream>\nusing namespace std;\n\nclass First { \nprivate:\n    int val;\npublic:\n    First(): val(115) {}\n    friend void Last_showValue(First obj);\n};\n\nvoid Last_showValue(First obj) { \n    cout << \"Private value of class First accessed from class Last: \" << obj.val << endl; \n}\n\nint main() {\n    First x;\n    Last_showValue(x);\n    return 0;\n}\n```",
+                options: ["Private value of class First accessed from class Last: 115", "Error: Cannot access private member", "Private value of class First accessed from class Last: 0", "None of the above"],
+                correctIndex: 0,
+                correctAnswer: "Private value of class First accessed from class Last: 115"
+            },
+            {
+                question: "Which of the following is true regarding `friend` functions in C++?",
+                options: ["They are members of the class.", "They can be called using the object of the class.", "They can be declared in either the private or public section of the class.", "They have a 'this' pointer."],
+                correctIndex: 2,
+                correctAnswer: "They can be declared in either the private or public section of the class."
+            },
+            {
+                question: "What is the primary advantage of using `delegating constructors`?",
+                options: ["They allow a constructor to directly call a member function.", "They reduce code redundancy by allowing one constructor to call another in the same class.", "They enable multiple inheritance.", "They simplify memory management."],
+                correctIndex: 1,
+                correctAnswer: "They reduce code redundancy by allowing one constructor to call another in the same class."
+            },
+            {
+                question: "True or False: A `friend` class gives access to private and protected members of another class.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "True or False: If a base class has a friend function, then the function automatically becomes a friend of the derived class.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "What is the term for initializing variables or objects at runtime using constructors?",
+                options: ["Static initialization", "Compile-time initialization", "Dynamic initialization", "Explicit initialization"],
+                correctIndex: 2,
+                correctAnswer: "Dynamic initialization"
+            },
+            {
+                question: "What is the output of the following C++ code?\n\n```cpp\n#include <iostream>\nusing namespace std;\n\nint main () {\n    int var1 = 10;\n    char var2[10] = \"Hello\";\n    cout << \"Address of var1 variable: \" << &var1 << endl;\n    cout << \"Address of var2 variable: \" << (void*)&var2 << endl; // Cast for char array address\n    return 0;\n}\n```\n\n(Note: The exact memory addresses will vary, focus on the format/concept.)",
+                options: ["Address of var1 variable: <some_address>\nAddress of var2 variable: <some_address>", "Error: Cannot print addresses directly", "Only the value of var1 will be printed.", "None of the above"],
+                correctIndex: 0,
+                correctAnswer: "Address of var1 variable: <some_address>\nAddress of var2 variable: <some_address>"
+            },
+            {
+                question: "What is the output of the following C++ code?\n\n```cpp\n#include <iostream>\nusing namespace std;\n\nint main () {\n    int *ptr = NULL;\n    cout << \"The value of ptr is \" << ptr ;\n    return 0;\n}\n```",
+                options: ["The value of ptr is 0", "Error: Dereferencing a NULL pointer", "The value of ptr is <garbage_value>", "None of the above"],
+                correctIndex: 0,
+                correctAnswer: "The value of ptr is 0"
+            },
+            {
+                question: "If `ptr` is an integer pointer pointing to address `1000`, what will be the address after `ptr++;` (assuming 32-bit integers)?",
+                options: ["1001", "1002", "1004", "1008"],
+                correctIndex: 2,
+                correctAnswer: "1004"
+            },
+            {
+                question: "What is the output of the following C++ code?\n\n```cpp\n#include <iostream>\nusing namespace std;\n\nconst int MAX = 3;\n\nint main () {\n    int var[MAX] = {10, 100, 200};\n    int *ptr;\n\n    ptr = var; \n\n    for (int i = 0; i < MAX; i++) {\n        cout << \"Value of var[\" << i << \"] = \" << *ptr << endl;\n        ptr++; \n    }\n    return 0;\n}\n```",
+                options: ["Value of var[0] = 10\nValue of var[1] = 100\nValue of var[2] = 200", "Value of var[0] = 10\nValue of var[1] = 10\nValue of var[2] = 10", "Error: Invalid pointer operation", "None of the above"],
+                correctIndex: 0,
+                correctAnswer: "Value of var[0] = 10\nValue of var[1] = 100\nValue of var[2] = 200"
+            },
+            {
+                question: "True or False: An array name can be incremented using `arrayName++;`.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "True or False: `int **var;` declares `var` as a pointer to a pointer to an integer.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "What is the output of the following C++ code?\n\n```cpp\n#include <iostream>\nusing namespace std;\n\nint main () {\n    int var = 3000;\n    int *ptr;\n    int **pptr;\n\n    ptr = &var;\n    pptr = &ptr;\n\n    cout << \"Value of var : \" << var << endl;\n    cout << \"Value available at *ptr :\" << *ptr << endl;\n    cout << \"Value available at **pptr : \" << **pptr << endl;\n    return 0;\n}\n```",
+                options: ["Value of var : 3000\nValue available at *ptr :3000\nValue available at **pptr : 3000", "Value of var : 3000\nValue available at *ptr :<address>\nValue available at **pptr : <address>", "Error: Invalid pointer usage", "None of the above"],
+                correctIndex: 0,
+                correctAnswer: "Value of var : 3000\nValue available at *ptr :3000\nValue available at **pptr : 3000"
+            },
+            {
+                question: "What is the primary difference between `static` and `dynamic` memory allocation?",
+                options: ["Static allocates at runtime, dynamic at compile time.", "Static is for local variables, dynamic for global variables.", "Static allocates at compile time, dynamic at runtime.", "Static uses heap, dynamic uses stack."],
+                correctIndex: 2,
+                correctAnswer: "Static allocates at compile time, dynamic at runtime."
+            },
+            {
+                question: "Which C function for dynamic memory allocation initially initializes all allocated bytes to zero?",
+                options: ["malloc()", "calloc()", "realloc()", "free()"],
+                correctIndex: 1,
+                correctAnswer: "calloc()"
+            },
+            {
+                question: "If `malloc()` or `calloc()` fail to allocate memory, what value do they return?",
+                options: ["An empty pointer", "0", "NULL", "An integer -1"],
+                correctIndex: 2,
+                correctAnswer: "NULL"
+            },
+            {
+                question: "True or False: After calling `free(ptr);`, it is good practice to set `ptr = NULL;` to avoid a 'dangling pointer'.",
+                options: ["True", "False"],
+                correctIndex: 0,
+                correctAnswer: "True"
+            },
+            {
+                question: "What is the C++ operator used to dynamically allocate memory on the heap?",
+                options: ["malloc", "calloc", "new", "allocate"],
+                correctIndex: 2,
+                correctAnswer: "new"
+            },
+            {
+                question: "What is the C++ operator used to de-allocate memory that was previously allocated by `new`?",
+                options: ["free", "delete", "dealloc", "remove"],
+                correctIndex: 1,
+                correctAnswer: "delete"
+            },
+            {
+                question: "Which of the following is an advantage of `new` operator over `malloc()` function in C++?",
+                options: ["It does not use the `sizeof()` operator.", "It automatically returns the correct data type pointer.", "It can be overloaded.", "All of the above."],
+                correctIndex: 3,
+                correctAnswer: "All of the above."
+            },
+            {
+                question: "What is a 'memory leak'?",
+                options: ["When memory is freed too early.", "When a program uses more memory than available.", "When allocated memory is no longer needed but remains allocated and unavailable.", "When a pointer points to an invalid address."],
+                correctIndex: 2,
+                correctAnswer: "When allocated memory is no longer needed but remains allocated and unavailable."
+            },
+            {
+                question: "Which of these is a common way to avoid memory leaks in C++?",
+                options: ["Using only static memory allocation.", "Calling `malloc()` without `free()`.", "Using smart pointers (e.g., `std::unique_ptr`).", "Ignoring deallocation to save time."],
+                correctIndex: 2,
+                correctAnswer: "Using smart pointers (e.g., `std::unique_ptr`)."
+            },
+            {
+                question: "True or False: The `inline` keyword guarantees that a function will be inlined by the compiler.",
+                options: ["True", "False"],
+                correctIndex: 1,
+                correctAnswer: "False"
+            },
+            {
+                question: "An inline function is primarily beneficial for:",
+                options: ["Large functions with many lines of code.", "Functions that are called only once.", "Embedded systems where performance is critical.", "Recursive functions."],
+                correctIndex: 2,
+                correctAnswer: "Embedded systems where performance is critical."
+            },
+            {
+                question: "Which C++ header file should you include for date and time manipulation functions like `time()` and `ctime()`?",
+                options: ["<chrono>", "<date>", "<ctime>", "<time.h>"],
+                correctIndex: 2,
+                correctAnswer: "<ctime>"
+            },
+            {
+                question: "What does the `time_t` data type typically represent?",
+                options: ["A formatted date string", "A timestamp (number of seconds since a specific epoch)", "A structure for date and time components", "A duration in milliseconds"],
+                correctIndex: 1,
+                correctAnswer: "A timestamp (number of seconds since a specific epoch)"
+            },
+            {
+                question: "The `tm_year` member of `struct tm` represents the number of years since:",
+                options: ["0", "1900", "1970", "2000"],
+                correctIndex: 1,
+                correctAnswer: "1900"
+            },
+            {
+                question: "Which function converts a `datetime` structure (`struct tm`) into a `time_t` timestamp?",
+                options: ["time()", "ctime()", "mktime()", "localtime()"],
+                correctIndex: 2,
+                correctAnswer: "mktime()"
+            },
+            {
+                question: "What is the primary purpose of Encapsulation in OOP?",
+                options: ["To inherit properties from base classes.", "To achieve polymorphism.", "To bind data and methods into a single unit and hide sensitive data.", "To manage dynamic memory."],
+                correctIndex: 2,
+                correctAnswer: "To bind data and methods into a single unit and hide sensitive data."
+            },
+            {
+                question: "Which access specifier is the default for class members if not explicitly specified?",
+                options: ["public", "protected", "private", "internal"],
+                correctIndex: 2,
+                correctAnswer: "private"
+            },
+            {
+                question: "A `static` member variable in a class:",
+                options: ["Has a separate copy for each object.", "Is shared by all objects of the class.", "Can only be accessed by `friend` functions.", "Is initialized every time an object is created."],
+                correctIndex: 1,
+                correctAnswer: "Is shared by all objects of the class."
+            },
+            {
+                question: "A `static` member function can directly access:",
+                options: ["Only non-static data members.", "Only static data members.", "Both static and non-static data members.", "Only private members."],
+                correctIndex: 1,
+                correctAnswer: "Only static data members."
+            },
+            {
+                question: "The 'this' pointer in C++:",
+                options: ["Is an explicit parameter for all member functions.", "Is available in static member functions.", "Refers to the address of the invoking object.", "Can be modified by the programmer."],
+                correctIndex: 2,
+                correctAnswer: "Refers to the address of the invoking object."
+            }
+        ];
+
+        const uniqueQuestionsMap = new Map();
+        quizData.forEach(q => {
+            uniqueQuestionsMap.set(q.question, q);
+        });
+        const finalQuizData = Array.from(uniqueQuestionsMap.values());
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        shuffleArray(finalQuizData);
+
+        const form = document.getElementById('quizForm');
+
+        finalQuizData.forEach((q, index) => {
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            const questionNumber = index + 1;
+
+            const questionText = document.createElement('div');
+            questionText.className = 'question-text';
+            if (q.question.includes('```cpp')) {
+                const parts = q.question.split('```cpp');
+                questionText.innerHTML = `${questionNumber}. ${parts[0]}<pre class="code-block">${parts[1].split('```')[0].trim()}</pre>${parts[1].split('```')[1] || ''}`;
+            } else {
+                questionText.textContent = `${questionNumber}. ${q.question}`;
+            }
+
+            card.appendChild(questionText);
+
+            const optionsContainer = document.createElement('div');
+            optionsContainer.className = 'options-container';
+
+            const options = [...q.options];
+            const shuffledOptions = shuffleArray(options);
+
+            shuffledOptions.forEach((opt, optIndex) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+
+                const id = `q${index}-${optIndex}`;
+                const radio = document.createElement('input');
+                radio.type = 'radio';
+                radio.id = id;
+                radio.name = `q${index}`;
+                radio.value = opt;
+
+                const label = document.createElement('label');
+                label.setAttribute('for', id);
+                label.textContent = opt;
+
+                optionDiv.appendChild(radio);
+                optionDiv.appendChild(label);
+                optionsContainer.appendChild(optionDiv);
+            });
+
+            card.appendChild(optionsContainer);
+            form.appendChild(card);
+        });
+
+        document.getElementById('submitBtn').addEventListener('click', () => {
+            const resultsContainer = document.getElementById('results');
+            const correctCountSpan = document.getElementById('correctCount');
+            const incorrectCountSpan = document.getElementById('incorrectCount');
+            const incorrectQuestionsDiv = document.getElementById('incorrectQuestions');
+
+            incorrectQuestionsDiv.innerHTML = '<h3>Questions to Review:</h3>';
+            let correctCount = 0;
+            let incorrectCount = 0;
+
+            finalQuizData.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+
+                if (!selectedOption) {
+                    incorrectCount++;
+                    const div = document.createElement('div');
+                    div.className = 'incorrect-question';
+                    div.innerHTML = `<p><strong>${index + 1}. ${q.question}</strong></p><p class="correct-answer">Correct Answer: ${q.correctAnswer}</p><p class="selected-answer">You did not select an answer.</p>`;
+                    incorrectQuestionsDiv.appendChild(div);
+                    return;
+                }
+
+                const selectedLabel = selectedOption.value.trim();
+
+                if (selectedLabel === q.options[q.correctIndex]) {
+                    correctCount++;
+                } else {
+                    incorrectCount++;
+                    const div = document.createElement('div');
+                    div.className = 'incorrect-question';
+                    div.innerHTML = `<p><strong>${index + 1}. ${q.question}</strong></p><p class="selected-answer">Your answer: ${selectedLabel}</p><p class="correct-answer">Correct Answer: ${q.correctAnswer}</p>`;
+                    incorrectQuestionsDiv.appendChild(div);
+                }
+            });
+
+            correctCountSpan.textContent = correctCount;
+            incorrectCountSpan.textContent = incorrectCount;
+            resultsContainer.style.display = 'block';
+            resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+
+        const timedMessageBox = document.getElementById('timedMessageBox');
+
+        function showTimedMessage() {
+            timedMessageBox.style.display = 'block';
+            setTimeout(() => {
+                timedMessageBox.style.display = 'none';
+            }, 3000);
+        }
+
+        setInterval(showTimedMessage, 300000);
+
+        const welcomeModal = document.getElementById('welcomeModal');
+        const modalOkBtn = document.getElementById('modalOkBtn');
+
+        welcomeModal.classList.add('show');
+
+        modalOkBtn.addEventListener('click', () => {
+            welcomeModal.classList.remove('show');
+        });
+    </script>
+
+</body>
+
+</html>
